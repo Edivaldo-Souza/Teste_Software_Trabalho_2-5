@@ -5,7 +5,7 @@ target/
 
 
 data/
-jqwik-database
+.jqwik-database
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
