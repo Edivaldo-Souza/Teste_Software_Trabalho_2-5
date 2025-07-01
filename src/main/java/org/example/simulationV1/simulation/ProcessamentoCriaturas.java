@@ -125,6 +125,7 @@ public class ProcessamentoCriaturas {
                     random.nextInt(WINDOW_WIDTH - Criatura.CRIATURA_LARGURA),
                     random.nextInt(WINDOW_HEIGHT - Criatura.CRIATURA_ALTURA),
                     2f, 0.1f, r, g, b, (byte) 255, randomNumber);
+            criaturas[i].shouldMove = true;
 
             evitarSobreposicao(criaturas, i, random);
         }
@@ -133,6 +134,8 @@ public class ProcessamentoCriaturas {
         criaturas[criaturas.length-1].guardiao = true;
         criaturas[criaturas.length-1].setPosX(WINDOW_WIDTH - Criatura.CRIATURA_LARGURA);
         criaturas[criaturas.length-1].setPosY(WINDOW_HEIGHT/2 - Criatura.CRIATURA_ALTURA);
+        criaturas[criaturas.length-1].setMoedas(0);
+        criaturas[criaturas.length-1].shouldMove = false;
 
         for (Criatura c : criaturas) {
             c.move();
@@ -192,7 +195,9 @@ public class ProcessamentoCriaturas {
             criaturas[criaturas.length-1].b += 1*multiplierB;
 
             for (Criatura c : criaturas) {
-                c.move();
+                if(c.shouldMove) {
+                    c.move();
+                }
             }
 
             // Colisão e lógica de moedas
@@ -299,6 +304,7 @@ public class ProcessamentoCriaturas {
         int tempQuantidadeMoedas = 0;
         if(criaturas[j].guardiao){
             System.out.println("Criatura " + j + " roubou " + criaturas[i].getMoedas() / 2 + " moedas da criatura " + i);
+            criaturas[j].shouldMove = true;
             criaturas[i].hasCollision = true;
             if(criaturas[i].getCluster()!=null){
                 criaturas[i].getCluster().getCriaturas().forEach(
@@ -312,6 +318,7 @@ public class ProcessamentoCriaturas {
         }
         else{
             System.out.println("Criatura " + i + " roubou " + criaturas[j].getMoedas() / 2 + " moedas da criatura " + j);
+            criaturas[i].shouldMove = true;
             criaturas[j].hasCollision = true;
             if(criaturas[j].getCluster()!=null){
                 criaturas[j].getCluster().getCriaturas().forEach(
@@ -325,12 +332,13 @@ public class ProcessamentoCriaturas {
         }
 
         if(criaturas[i].getCluster()!=null && criaturas[j].getCluster()!=null){
-            tempQuantidadeMoedas = criaturas[j].getCluster().giveCoins();
+            tempQuantidadeMoedas = criaturas[j].getCluster().giveCoins(false);
             criaturas[i].getCluster().receiveCoins(tempQuantidadeMoedas);
         }
         else if(criaturas[i].getCluster()!=null && criaturas[j].getCluster()==null){
             if(criaturas[j].guardiao){
-                tempQuantidadeMoedas = criaturas[i].getCluster().giveCoins();
+                criaturas[j].shouldMove = true;
+                tempQuantidadeMoedas = criaturas[i].getCluster().giveCoins(true);
                 criaturas[j].receiveCoins(tempQuantidadeMoedas);
             }
             else {
@@ -339,6 +347,7 @@ public class ProcessamentoCriaturas {
         }
         else {
             if(criaturas[j].guardiao){
+                criaturas[j].shouldMove = true;
                 criaturas[j].receiveCoins(tempQuantidadeMoedas);
             }
             else {

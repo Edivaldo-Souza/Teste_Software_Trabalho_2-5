@@ -19,6 +19,10 @@ public class Cluster {
         criaturas.add(criatura);
     }
 
+    public int getTotalDeCriaturas() {
+        return criaturas.size()+1;
+    }
+
     public int getMoedasDoCluster() {
         return moedasDoCluster;
     }
@@ -31,9 +35,16 @@ public class Cluster {
         this.moedasDoCluster += quantidadeMoedas;
     }
 
-    public int giveCoins(){
-        this.moedasDoCluster/=2;
-        return moedasDoCluster;
+    public int giveCoins(boolean giveToGuardiao){
+        if(!giveToGuardiao) {
+            this.moedasDoCluster /= 2;
+            return moedasDoCluster;
+        }
+        else{
+            int quantidadeMoedas = moedasDoCluster;
+            this.moedasDoCluster = 0;
+            return quantidadeMoedas;
+        }
     }
 
     public float getVelX() {

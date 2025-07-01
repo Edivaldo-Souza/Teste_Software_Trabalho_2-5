@@ -88,6 +88,6 @@ public class Usuario {
                 " avatar = '" + avatar + '\'' + "\n" +
                 " quantidade de simulações = " + quantidadeSimulacoes + "\n" +
                 " média de simulações bem sucedidas = " + mediaSimulacoesBemSucedidas + "\n" +
-                " pontuação = " + pontuacao + "\n";
+                " pontuação = " + quantidadeSimulacoesBemSucedidas + "\n";
     }
 }
