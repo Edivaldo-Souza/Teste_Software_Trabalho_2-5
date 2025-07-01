@@ -6,6 +6,7 @@ target/
 
 data/
 .jqwik-database
+lib/
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
