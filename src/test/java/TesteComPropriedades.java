@@ -81,7 +81,30 @@ public class TesteComPropriedades{
         assertThat(criaturas[criaturas.length-1].getMoedas()).isEqualTo(0);
     }
 
-    //guardiaoRoubaTodasAsMoedasDeUmCluster
+    @Property
+    public void guardiaoRoubaTodasAsMoedasDeUmCluster(
+            @Size(2)
+            @ForAll
+            List<@IntRange(min= 0, max = 100000) Integer> quantidadeMoedasCriatura
+    ){
+        Criatura criatura1 = new Criatura();
+        Criatura criatura2 = new Criatura();
+
+        criatura1.setMoedas(quantidadeMoedasCriatura.get(0));
+        criatura2.setMoedas(quantidadeMoedasCriatura.get(1));
+
+        Cluster cluster = new Cluster();
+
+        criatura1.cluster = cluster;
+        criatura2.guardiao = true;
+        criatura1.getCluster().setMoedasDoCluster(criatura1.getMoedas());
+
+        criatura2.receiveCoins(criatura1.getCluster().giveCoins(criatura2.guardiao));
+        assertThat(criatura2.getMoedas()).isEqualTo(
+                quantidadeMoedasCriatura.get(0)+quantidadeMoedasCriatura.get(1)
+        );
+    }
+
     //guardiaoSeMoveAposTodasAsOutrasCriaturas
     //simulacaoBemSucedidaQuandoSobraUmaCriaturaEoGuardiao
 }
