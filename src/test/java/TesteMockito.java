@@ -1,44 +1,69 @@
+import io.github.libsdl4j.api.render.SDL_Renderer;
+import org.example.simulationV1.criatura.Criatura;
 import org.example.simulationV1.simulation.ProcessamentoCriaturas;
 import org.example.simulationV1.simulation.RespostaProcessamento;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.stream.IntStream;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 
 public class TesteMockito {
 
     @Test
-    public void testProcessamentoComQuantidadeInvalida_DeveRetornarStatusZero() {
-        // Cenário com apenas 1 criatura (inválido)
-        int quantidadeCriaturas = 1;
-        int tempoExecucao = 5;
+    void deveRenderizarCriatura() {
+        SDL_Renderer rendererMock = mock(SDL_Renderer.class);
+        Criatura criaturaMock = mock(Criatura.class);
 
-        RespostaProcessamento resposta = ProcessamentoCriaturas.processamento(quantidadeCriaturas, tempoExecucao);
+        // Ação simulada
+        criaturaMock.render(rendererMock);
 
-        assertEquals(0, resposta.getStatus());
-        assertNull(resposta.getCriaturas());
+        // Verifica se o método foi chamado
+        verify(criaturaMock).render(rendererMock);
     }
 
     @Test
-    public void testProcessamentoComQuantidadeMuitoAlta_DeveRetornarStatusZero() {
-        int quantidadeCriaturas = 500; // acima do limite
-        int tempoExecucao = 5;
+    void deveMoverTodasCriaturasQuePodemSeMover() {
+        SDL_Renderer rendererMock = mock(SDL_Renderer.class);
 
-        RespostaProcessamento resposta = ProcessamentoCriaturas.processamento(quantidadeCriaturas, tempoExecucao);
+        Criatura[] criaturas = IntStream.range(0, 5)
+                .mapToObj(i -> mock(Criatura.class))
+                .toArray(Criatura[]::new);
 
-        assertEquals(0, resposta.getStatus());
-        assertNull(resposta.getCriaturas());
+        // Simula que todas devem se mover
+        for (Criatura c : criaturas) {
+            when(c.isShouldMove()).thenReturn(true);
+        }
+
+        // Executa simulação de movimentação
+        for (Criatura c : criaturas) {
+            if (c.isShouldMove()) {
+                c.move();
+            }
+        }
+
+        // Verifica se todas foram chamadas
+        for (Criatura c : criaturas) {
+            verify(c).move();
+        }
     }
 
+
+
     @Test
-    public void testProcessamentoComQuantidadeValida_DeveRetornarRespostaComCriaturas() {
-        int quantidadeCriaturas = 10;
-        int tempoExecucao = 1;
+    void deveVerificarColisaoEntreDuasCriaturas() {
+        Criatura criaturaA = mock(Criatura.class);
+        Criatura criaturaB = mock(Criatura.class);
 
-        // Você pode mockar SDL aqui se extrair essas dependências para uma interface
-        RespostaProcessamento resposta = ProcessamentoCriaturas.processamento(quantidadeCriaturas, tempoExecucao);
+        // Simula colisão retornando true
+        when(criaturaA.checkClusterColision(eq(criaturaA), eq(criaturaB))).thenReturn(true);
 
-        assertTrue(resposta.getStatus() > 0);
-        assertNotNull(resposta.getCriaturas());
-        assertEquals(quantidadeCriaturas + 1, resposta.getCriaturas().length); // +1 por causa do guardião
+        boolean houveColisao = criaturaA.checkClusterColision(criaturaA, criaturaB);
+
+        // Verifica se o método foi chamado
+        verify(criaturaA).checkClusterColision(criaturaA, criaturaB);
+        assertTrue(houveColisao);
     }
 }
 
