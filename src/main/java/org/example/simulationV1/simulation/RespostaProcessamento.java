@@ -7,10 +7,6 @@ public class RespostaProcessamento {
     private Criatura[] criaturas;
     private int status;
 
-    public Criatura[] getCriaturas() {
-        return criaturas;
-    }
-
     public void setCriaturas(Criatura[] criaturas) {
         this.criaturas = criaturas;
     }

@@ -5,10 +5,12 @@ import org.example.simulationV1.criatura.Criatura;
 import org.example.simulationV1.simulation.ProcessamentoCriaturas;
 import org.junit.jupiter.api.Test;
 
+
 import java.util.Random;
 
 import static org.example.simulationV1.simulation.ProcessamentoCriaturas.loopPrincipal;
 import static org.junit.jupiter.api.Assertions.*;
+
 
 public class TesteEstrutural {
 
@@ -357,6 +359,5 @@ public class TesteEstrutural {
         // O tempo total ainda deve ser de no mínimo 1000ms (tempoExecucao)
         assertTrue(duracao >= 1000);
     }
-
 }
 
