@@ -252,4 +252,9 @@ public class Criatura {
     public Cluster getCluster() {
         return cluster;
     }
+
+    public boolean isShouldMove() {
+        return shouldMove;
+    }
+
 }
