@@ -225,14 +225,6 @@ public class Criatura {
         this.collisionBox.x = (int) posX;
     }
 
-    public float getPosX(){
-        return this.posX;
-    }
-
-    public float getPosY(){
-        return this.posY;
-    }
-
     public int getMoedas() {
         return moedas;
     }

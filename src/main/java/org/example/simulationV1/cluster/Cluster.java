@@ -47,27 +47,7 @@ public class Cluster {
         }
     }
 
-    public float getVelX() {
-        return velX;
-    }
-
-    public void setVelX(float velX) {
-        this.velX = velX;
-    }
-
-    public float getVelY() {
-        return velY;
-    }
-
-    public void setVelY(float velY) {
-        this.velY = velY;
-    }
-
     public List<Criatura> getCriaturas() {
         return criaturas;
-    }
-
-    public void setCriaturas(List<Criatura> criaturas) {
-        this.criaturas = criaturas;
     }
 }

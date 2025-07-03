@@ -3,6 +3,7 @@ import io.github.libsdl4j.api.rect.SDL_Rect;
 import io.github.libsdl4j.api.render.SDL_Renderer;
 import org.example.simulationV1.criatura.Criatura;
 import org.example.simulationV1.simulation.ProcessamentoCriaturas;
+import org.example.usuarioInterface.UsuarioInterface;
 import org.junit.jupiter.api.Test;
 
 
@@ -10,6 +11,7 @@ import java.util.Random;
 
 import static org.example.simulationV1.simulation.ProcessamentoCriaturas.loopPrincipal;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 
 public class TesteEstrutural {
@@ -358,6 +360,14 @@ public class TesteEstrutural {
 
         // O tempo total ainda deve ser de no mínimo 1000ms (tempoExecucao)
         assertTrue(duracao >= 1000);
+    }
+
+    @Test
+    public void testarSelecaoDeOpcao(){
+        UsuarioInterface usuarioInterface = mock(UsuarioInterface.class);
+
+
+
     }
 }
 
