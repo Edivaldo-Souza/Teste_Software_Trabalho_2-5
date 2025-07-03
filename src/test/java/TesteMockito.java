@@ -66,5 +66,10 @@ public class TesteMockito {
         verify(criaturaA).checkClusterColision(criaturaA, criaturaB);
         assertTrue(houveColisao);
     }
+
+    @Test
+    public void salvarUsuario(){
+
+    }
 }
 

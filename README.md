@@ -46,6 +46,11 @@ dos dados recebidos e 100% de cobertura de decisão.
 
 ![Clusters](cluster.png)
 
+### Criatura Guardião
+> Na simulação, o guardião é o quadrado que muda de cor com o passar do tempo
+> e que sempre aparece parado no início da simulação no limite direito da tela
+
+![Guardiao](guardiao.png)
 
 ## ✨ Testes
 
@@ -550,8 +555,11 @@ public void testFrameDelayNaoAconteceQuandoFrameTimeMaiorOuIgualFrameDelay() {
 
 ## Como Utilizar
 - Abrir projeto na IDE
+- Executar o arquivo Main.java usar as funcionalidades novas
+- 
 - Executar os seguintes arquivos de teste:
   - TesteDominio.java
   - TesteEstrutural.java (100% MC/DC Coverege)
   - TesteFronteira.java
+  - Teste
 

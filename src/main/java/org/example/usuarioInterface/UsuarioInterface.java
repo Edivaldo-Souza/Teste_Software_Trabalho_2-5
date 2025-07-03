@@ -70,11 +70,9 @@ public class UsuarioInterface {
     public void executarSimulacao(Long usuarioId){
         RespostaProcessamento resposta = ProcessamentoCriaturas.processamento(10,60);
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("meuPU_H2");
-        EntityManager em = emf.createEntityManager();
+        UsuarioService usuarioService = new UsuarioService();
 
-        try{
-            Usuario usuario = em.find(Usuario.class, usuarioId);
+            Usuario usuario = usuarioService.buscarPorId(usuarioId);
             usuario.setQuantidadeSimulacoes(usuario.getQuantidadeSimulacoes() + 1);
 
             if(resposta.getStatus()==1){
@@ -87,25 +85,7 @@ public class UsuarioInterface {
                     (float) usuario.getQuantidadeSimulacoesBemSucedidas()/usuario.getQuantidadeSimulacoes()
             );
 
-            em.getTransaction().begin();
-            em.persist(usuario);
-            em.getTransaction().commit();
-        }catch (Exception e){
-            // Em caso de erro, reverter a transação
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            e.printStackTrace();
-        }finally {
-            // Fechar o EntityManager e o EntityManagerFactory
-            if (em != null && em.isOpen()) {
-                em.close();
-            }
-            if (emf != null && emf.isOpen()) {
-                emf.close();
-            }
-        }
-
+            usuarioService.salvarUsuario(usuario);
     }
 
     public Usuario salvarUsuario(){
@@ -126,33 +106,11 @@ public class UsuarioInterface {
         usuario.setQuantidadeSimulacoesBemSucedidas(0);
         usuario.setPontuacao(0D);
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("meuPU_H2");
-        EntityManager em = emf.createEntityManager();
 
-        UsuarioService usuarioService = new UsuarioService(em);
+        UsuarioService usuarioService = new UsuarioService();
 
         Usuario usuarioEncontrado = new Usuario();
-        try{
-            em.getTransaction().begin();
-            em.persist(usuario);
-            em.getTransaction().commit();
-            usuarioEncontrado = usuarioService.buscarPorLogin(login);
-        }catch (Exception e){
-            // Em caso de erro, reverter a transação
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            e.printStackTrace();
-        }finally {
-            // Fechar o EntityManager e o EntityManagerFactory
-            if (em != null && em.isOpen()) {
-                em.close();
-            }
-            if (emf != null && emf.isOpen()) {
-                emf.close();
-            }
-        }
-        return usuarioEncontrado;
+        return usuarioService.salvarUsuario(usuario);
     }
 
     public long login(){
@@ -162,67 +120,27 @@ public class UsuarioInterface {
         System.out.println("Informe a senha do usuario: ");
         String senha = sc.nextLine();
 
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("meuPU_H2");
-        EntityManager em = emf.createEntityManager();
+        UsuarioService usuarioService = new UsuarioService();
 
-        UsuarioService usuarioService = new UsuarioService(em);
-
-
-        try{
             Usuario usuarioEncontrado = usuarioService.buscarPorLogin(login);
             if(usuarioEncontrado.getSenha().equals(senha)){
 
                 return usuarioEncontrado.getId();
             }
             else return 0;
-        }catch (Exception e){
-            // Em caso de erro, reverter a transação
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            e.printStackTrace();
-        }finally {
-            // Fechar o EntityManager e o EntityManagerFactory
-            if (em != null && em.isOpen()) {
-                em.close();
-            }
-            if (emf != null && emf.isOpen()) {
-                emf.close();
-            }
-        }
-        return 0;
     }
 
     public void listarUsuarios(){
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("meuPU_H2");
-        EntityManager em = emf.createEntityManager();
+        UsuarioService usuarioService = new UsuarioService();
 
-        UsuarioService usuarioService = new UsuarioService(em);
+        List<Usuario> usuarios = usuarioService.buscarTodos();
+        usuarios.forEach(System.out::println);
 
-        try{
-            List<Usuario> usuarios = usuarioService.buscarTodos();
-            usuarios.forEach(System.out::println);
+        System.out.println("Quantidade total de simulações = "
+                +usuarios.stream().mapToInt(Usuario::getQuantidadeSimulacoes).sum());
+        System.out.println("Média de simulações bem sucedidas totais = "
+                +usuarios.stream().mapToDouble(Usuario::getQuantidadeSimulacoesBemSucedidas).sum()/
+                usuarios.stream().mapToDouble(Usuario::getQuantidadeSimulacoes).sum());
 
-            System.out.println("Quantidade total de simulações = "
-                    +usuarios.stream().mapToInt(Usuario::getQuantidadeSimulacoes).sum());
-            System.out.println("Média de simulações bem sucedidas totais = "
-                    +usuarios.stream().mapToDouble(Usuario::getQuantidadeSimulacoesBemSucedidas).sum()/
-                    usuarios.stream().mapToDouble(Usuario::getQuantidadeSimulacoes).sum());
-
-        }catch (Exception e){
-            // Em caso de erro, reverter a transação
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            e.printStackTrace();
-        }finally {
-            // Fechar o EntityManager e o EntityManagerFactory
-            if (em != null && em.isOpen()) {
-                em.close();
-            }
-            if (emf != null && emf.isOpen()) {
-                emf.close();
-            }
-        }
     }
 }
