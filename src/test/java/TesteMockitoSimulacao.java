@@ -1,7 +1,5 @@
 import io.github.libsdl4j.api.render.SDL_Renderer;
 import org.example.simulationV1.criatura.Criatura;
-import org.example.simulationV1.simulation.ProcessamentoCriaturas;
-import org.example.simulationV1.simulation.RespostaProcessamento;
 import org.junit.jupiter.api.Test;
 
 import java.util.stream.IntStream;
@@ -10,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 
-public class TesteMockito {
+public class TesteMockitoSimulacao {
 
     @Test
     void deveRenderizarCriatura() {

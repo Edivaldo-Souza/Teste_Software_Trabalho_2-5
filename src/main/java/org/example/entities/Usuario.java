@@ -84,10 +84,18 @@ public class Usuario {
 
     @Override
     public String toString() {
-        return "Usuario " + login +" :\n" +
-                " avatar = '" + avatar + '\'' + "\n" +
-                " quantidade de simulações = " + quantidadeSimulacoes + "\n" +
-                " média de simulações bem sucedidas = " + mediaSimulacoesBemSucedidas + "\n" +
-                " pontuação = " + quantidadeSimulacoesBemSucedidas + "\n";
+        return String.format(
+                "Usuario %s :\n" +
+                        " avatar = '%s'\n" +
+                        " quantidade de simulações = %d\n" +
+                        " média de simulações bem sucedidas = %.4f\n" +
+                        " pontuação = %.2f\n",
+                login != null ? login : "(sem login)",
+                avatar != null ? avatar : "(sem avatar)",
+                quantidadeSimulacoes,
+                mediaSimulacoesBemSucedidas != null ? mediaSimulacoesBemSucedidas : 0.0,
+                pontuacao != null ? pontuacao : 0.0
+        );
     }
+
 }
