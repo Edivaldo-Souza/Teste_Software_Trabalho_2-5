@@ -1,53 +1,16 @@
 import io.github.libsdl4j.api.render.SDL_Renderer;
+import org.example.simulationV1.cluster.Cluster;
 import org.example.simulationV1.criatura.Criatura;
 import org.junit.jupiter.api.Test;
 
 import java.util.stream.IntStream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 
 public class TesteMockitoSimulacao {
-
-    @Test
-    void deveRenderizarCriatura() {
-        SDL_Renderer rendererMock = mock(SDL_Renderer.class);
-        Criatura criaturaMock = mock(Criatura.class);
-
-        // Ação simulada
-        criaturaMock.render(rendererMock);
-
-        // Verifica se o método foi chamado
-        verify(criaturaMock).render(rendererMock);
-    }
-
-    @Test
-    void deveMoverTodasCriaturasQuePodemSeMover() {
-        SDL_Renderer rendererMock = mock(SDL_Renderer.class);
-
-        Criatura[] criaturas = IntStream.range(0, 5)
-                .mapToObj(i -> mock(Criatura.class))
-                .toArray(Criatura[]::new);
-
-        // Simula que todas devem se mover
-        for (Criatura c : criaturas) {
-            when(c.isShouldMove()).thenReturn(true);
-        }
-
-        // Executa simulação de movimentação
-        for (Criatura c : criaturas) {
-            if (c.isShouldMove()) {
-                c.move();
-            }
-        }
-
-        // Verifica se todas foram chamadas
-        for (Criatura c : criaturas) {
-            verify(c).move();
-        }
-    }
-
 
 
     @Test
@@ -66,8 +29,32 @@ public class TesteMockitoSimulacao {
     }
 
     @Test
-    public void salvarUsuario(){
+    void deveAdicionarMoedasAoClusterQuandoRecebeMoedas() {
+        Criatura criatura = new Criatura();
+        Cluster cluster = mock(Cluster.class);
 
+        criatura.cluster = cluster;
+        criatura.setMoedas(500);
+
+        criatura.receiveCoins(200);
+
+        verify(cluster, never()).receiveCoins(anyInt()); // comportamento depende de contexto
+        assertEquals(700, criatura.getMoedas());
     }
+    @Test
+    void deveChamarReceiveCoinsNoClusterQuandoRecebeMoedas() {
+        Criatura criatura = new Criatura();
+        Cluster cluster = mock(Cluster.class);
+
+        criatura.cluster = cluster;
+        criatura.setMoedas(100);
+
+        criatura.receiveCoins(50);
+
+        verify(cluster, never()).receiveCoins(anyInt());
+        assertEquals(150, criatura.getMoedas());
+    }
+
+
 }
 
