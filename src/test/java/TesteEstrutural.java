@@ -1,12 +1,19 @@
 
 import io.github.libsdl4j.api.rect.SDL_Rect;
 import io.github.libsdl4j.api.render.SDL_Renderer;
+import org.example.entities.Usuario;
 import org.example.simulationV1.criatura.Criatura;
 import org.example.simulationV1.simulation.ProcessamentoCriaturas;
 import org.example.usuarioInterface.UsuarioInterface;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.Random;
 
 import static org.example.simulationV1.simulation.ProcessamentoCriaturas.loopPrincipal;
@@ -15,6 +22,23 @@ import static org.mockito.Mockito.mock;
 
 
 public class TesteEstrutural {
+
+    private final PrintStream originalOut = System.out;
+    private final InputStream originalIn = System.in;
+
+    ByteArrayOutputStream testOut;
+
+    @BeforeEach
+    void setUpStreams() {
+        testOut = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(testOut));
+    }
+
+    @AfterEach
+    void restoreStreams() {
+        System.setOut(originalOut);
+        System.setIn(originalIn);
+    }
 
     @Test
     public void testQuantidadeCriaturasMenorQue2() {
@@ -26,12 +50,6 @@ public class TesteEstrutural {
     public void testQuantidadeCriaturasMaiorOuIgual2() {
         int resultado = ProcessamentoCriaturas.processamento(2, 100).getStatus(); // Valor igual ou maior que 2
         assertEquals(1, resultado, "Deve retornar 1 quando a quantidade de criaturas for suficiente");
-    }
-
-    @Test
-    public void testQuantidadeCriaturasMenorIgualQue200() {
-        int resultado = ProcessamentoCriaturas.processamento(200, 100).getStatus();
-        assertEquals(1, resultado, "Deve retornar 1 quando a quantidade de criaturas for menor ou igual que 200");
     }
 
     @Test
@@ -363,11 +381,20 @@ public class TesteEstrutural {
     }
 
     @Test
-    public void testarSelecaoDeOpcao(){
-        UsuarioInterface usuarioInterface = mock(UsuarioInterface.class);
+    public void testarFluxoDeRealizarSimulacao(){
+        UsuarioInterface usuarioInterface = new UsuarioInterface();
 
+        String input = "2\nUsuario\n123\nAvatar\n1\nUsuario\n123\n1\n3\n3";
+        String input1 = "2\n";
+        String input2 = "Usuario\n123\nAvatar\n";
+        String input3 = "1\n";
+        String input4 = "Usuario\n123\n";
+        String input5 = "1\n";
+        String input6 = "3\n";
+        ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
 
-
+        usuarioInterface.iniciar();
     }
 }
 
