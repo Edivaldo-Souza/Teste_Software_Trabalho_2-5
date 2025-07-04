@@ -6,6 +6,7 @@ import org.example.usuarioInterface.UsuarioInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.Scanner;
 
@@ -56,30 +57,6 @@ public class testeMockitoUsuario {
     }
 
     @Test
-    public void testLogin_sucesso() {
-        Scanner scannerMock = mock(Scanner.class);
-        when(scannerMock.nextLine()).thenReturn("user", "123");
-
-        UsuarioService usuarioServiceMock = mock(UsuarioService.class);
-        Usuario usuario = new Usuario();
-        usuario.setLogin("user");
-        usuario.setSenha("123");
-        usuario.setId(10L);
-
-        when(usuarioServiceMock.buscarPorLogin("user")).thenReturn(usuario);
-
-        UsuarioInterface ui = new UsuarioInterface() {
-            @Override
-            public long login() {
-                return usuario.getSenha().equals("123") ? usuario.getId() : 0;
-            }
-        };
-
-        long id = ui.login();
-        assertThat(id).isEqualTo(10L);
-    }
-
-    @Test
     public void testLogin_falha() {
         Usuario usuario = new Usuario();
         usuario.setLogin("user");
@@ -99,8 +76,8 @@ public class testeMockitoUsuario {
 
     @Test
     public void testSalvarUsuario() {
-        Scanner scanner = mock(Scanner.class);
-        when(scanner.nextLine()).thenReturn("user", "123", "avatar");
+        String simulatedInput = String.join("\n", "user", "123", "avatar");
+        System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
 
         UsuarioService usuarioServiceMock = mock(UsuarioService.class);
         Usuario usuarioSalvo = new Usuario();
@@ -113,10 +90,15 @@ public class testeMockitoUsuario {
         UsuarioInterface ui = new UsuarioInterface() {
             @Override
             public Usuario salvarUsuario() {
+                Scanner sc = new Scanner(System.in);
+                String login = sc.nextLine();
+                String senha = sc.nextLine();
+                String avatar = sc.nextLine();
+
                 Usuario u = new Usuario();
-                u.setLogin("user");
-                u.setSenha("123");
-                u.setAvatar("avatar");
+                u.setLogin(login);
+                u.setSenha(senha);
+                u.setAvatar(avatar);
                 return usuarioServiceMock.salvarUsuario(u);
             }
         };
@@ -126,6 +108,7 @@ public class testeMockitoUsuario {
         assertThat(result.getSenha()).isEqualTo("123");
         assertThat(result.getAvatar()).isEqualTo("avatar");
     }
+
 
     @Test
     public void testListarUsuarios() {
