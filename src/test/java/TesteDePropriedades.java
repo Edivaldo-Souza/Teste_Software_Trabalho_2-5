@@ -11,7 +11,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.example.simulationV1.simulation.ProcessamentoCriaturas.gerarCriaturas;
 
-public class TesteComPropriedades{
+public class TesteDePropriedades{
     @Property
     public void juntarQuantidadeDeMoedasDeCriaturasAoSeTornaremUmCluster(
             @Size(2)
@@ -105,6 +105,4 @@ public class TesteComPropriedades{
         );
     }
 
-    //guardiaoSeMoveAposTodasAsOutrasCriaturas
-    //simulacaoBemSucedidaQuandoSobraUmaCriaturaEoGuardiao
 }

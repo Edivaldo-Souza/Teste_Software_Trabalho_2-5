@@ -94,7 +94,7 @@ public class Usuario {
                 avatar != null ? avatar : "(sem avatar)",
                 quantidadeSimulacoes,
                 mediaSimulacoesBemSucedidas != null ? mediaSimulacoesBemSucedidas : 0.0,
-                pontuacao != null ? pontuacao : 0.0
+                quantidadeSimulacoesBemSucedidas != null ? quantidadeSimulacoesBemSucedidas : 0.0
         );
     }
 

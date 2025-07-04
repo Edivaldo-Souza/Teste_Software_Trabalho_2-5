@@ -548,6 +548,256 @@ public void testFrameDelayNaoAconteceQuandoFrameTimeMaiorOuIgualFrameDelay() {
 }
 ```
 
+### Teste de Propriedades
+
+- Avalia a propriedade em que duas criaturas tem suas quantidades de 
+moedas somadas para formar um cluster
+```java
+@Property
+    public void juntarQuantidadeDeMoedasDeCriaturasAoSeTornaremUmCluster(
+            @Size(2)
+            @ForAll
+            List<@IntRange(min= 0, max = 100000) Integer> quantidadeMoedasCriatura
+    ){
+        Criatura criatura1 = new Criatura();
+        Criatura criatura2 = new Criatura();
+
+        criatura1.setMoedas(quantidadeMoedasCriatura.get(0));
+        criatura2.setMoedas(quantidadeMoedasCriatura.get(1));
+
+        Cluster cluster = new Cluster();
+        cluster.setMoedasDoCluster(criatura1.getMoedas()+criatura2.getMoedas());
+
+        assertThat(cluster.getMoedasDoCluster()).isEqualTo(
+                quantidadeMoedasCriatura.get(0)+quantidadeMoedasCriatura.get(1)
+        );
+    }
+```
+
+- Avalia propriedade do cluster de roubar metade das moedas da criatura
+que se aproximar o suficiente do cluster
+
+```java
+@Property
+    public void quandoClusterSeAproximarDeCriaturaRoubarMetadeDeSuasMoedas(
+            @Size(2)
+            @ForAll
+            List<@IntRange(min= 0, max = 100000) Integer> quantidadeMoedasCriatura
+    ){
+        Criatura criatura1 = new Criatura();
+        Criatura criatura2 = new Criatura();
+
+        criatura1.setMoedas(quantidadeMoedasCriatura.get(0));
+        criatura2.setMoedas(quantidadeMoedasCriatura.get(1));
+
+        Cluster cluster = new Cluster();
+
+        criatura1.cluster = cluster;
+        criatura1.getCluster().setMoedasDoCluster(criatura1.getMoedas());
+        criatura1.getCluster().receiveCoins(criatura2.giveCoins());
+        assertThat(criatura1.getCluster().getMoedasDoCluster()).isEqualTo(
+                quantidadeMoedasCriatura.get(0)+quantidadeMoedasCriatura.get(1)/2
+        );
+    }
+```
+
+- Verifica a capacidade de um cluster para conter mais de uma criatura
+em sua formação 
+
+```java
+@Property
+    public void clusterPodeSerFormadoPorUmaOuMaisCriaturas(
+            @ForAll
+            @IntRange(min=2, max=100) Integer quantidadeDeCriaturas
+    ){
+        Criatura[] criaturas = new Criatura[quantidadeDeCriaturas];
+        Cluster cluster = new Cluster();
+
+        criaturas[0] = new Criatura();
+        criaturas[0].cluster = cluster;
+        for(int i=1; i<quantidadeDeCriaturas; i++){
+            criaturas[i] = new Criatura();
+            criaturas[0].getCluster().addCriatura(criaturas[i]);
+        }
+
+        assertThat(criaturas[0].getCluster().getTotalDeCriaturas()).isEqualTo(quantidadeDeCriaturas);
+    }
+```
+
+- Avalia a propriedade da criatura guardião de sempre iniciar com uma quantidade
+igual a zero de moedas
+
+```java
+@Property
+    public void quantidadeInicialDeMoedasDaCriaturaGuardiaoDeveSerZero(
+            @ForAll
+            @IntRange(min=2, max=200) Integer quantidadeDeCriaturas
+    ){
+        Criatura[] criaturas = gerarCriaturas(quantidadeDeCriaturas,0.1);
+        assertThat(criaturas[criaturas.length-1].getMoedas()).isEqualTo(0);
+    }
+```
+
+- Teste que garante a propriedade da criatura guardião de roubar todas 
+as moedas de um cluster que se aproxime dele
+
+```java
+@Property
+    public void guardiaoRoubaTodasAsMoedasDeUmCluster(
+            @Size(2)
+            @ForAll
+            List<@IntRange(min= 0, max = 100000) Integer> quantidadeMoedasCriatura
+    ){
+        Criatura criatura1 = new Criatura();
+        Criatura criatura2 = new Criatura();
+
+        criatura1.setMoedas(quantidadeMoedasCriatura.get(0));
+        criatura2.setMoedas(quantidadeMoedasCriatura.get(1));
+
+        Cluster cluster = new Cluster();
+
+        criatura1.cluster = cluster;
+        criatura2.guardiao = true;
+        criatura1.getCluster().setMoedasDoCluster(criatura1.getMoedas());
+
+        criatura2.receiveCoins(criatura1.getCluster().giveCoins(criatura2.guardiao));
+        assertThat(criatura2.getMoedas()).isEqualTo(
+                quantidadeMoedasCriatura.get(0)+quantidadeMoedasCriatura.get(1)
+        );
+    }
+```
+
+### Testes com Dublê de Teste
+
+- Teste com dublê caso a simulação do usuário seja finalizada com sucesso
+```java
+    public void testExecutarSimulacao_sucesso() {
+        UsuarioService usuarioServiceMock = mock(UsuarioService.class);
+        Usuario usuario = new Usuario();
+        usuario.setQuantidadeSimulacoes(0);
+        usuario.setQuantidadeSimulacoesBemSucedidas(0);
+        usuario.setPontuacao(0D);
+
+        ProcessamentoCriaturas mockProc = mock(ProcessamentoCriaturas.class);
+        RespostaProcessamento resposta = new RespostaProcessamento();
+        resposta.setStatus(1);
+
+        when(usuarioServiceMock.buscarPorId(1L)).thenReturn(usuario);
+
+        UsuarioInterface ui = new UsuarioInterface() {
+            @Override
+            public void executarSimulacao(Long usuarioId) {
+                RespostaProcessamento resposta = new RespostaProcessamento();
+                resposta.setStatus(1);
+                Usuario usuario = usuarioServiceMock.buscarPorId(usuarioId);
+                usuario.setQuantidadeSimulacoes(usuario.getQuantidadeSimulacoes() + 1);
+                if (resposta.getStatus() == 1) {
+                    usuario.setQuantidadeSimulacoesBemSucedidas(usuario.getQuantidadeSimulacoesBemSucedidas() + 1);
+                }
+                usuario.setMediaSimulacoesBemSucedidas(
+                        (float) usuario.getQuantidadeSimulacoesBemSucedidas() / usuario.getQuantidadeSimulacoes()
+                );
+                usuarioServiceMock.salvarUsuario(usuario);
+            }
+        };
+
+        ui.executarSimulacao(1L);
+        verify(usuarioServiceMock).salvarUsuario(usuario);
+        assertThat(usuario.getQuantidadeSimulacoes()).isEqualTo(1);
+        assertThat(usuario.getQuantidadeSimulacoesBemSucedidas()).isEqualTo(1);
+        assertThat(usuario.getMediaSimulacoesBemSucedidas()).isEqualTo(1.0f);
+    }
+```
+
+- Teste para quando ocorre a falha de fazer login como usuário
+
+```java
+    public void testLogin_falha() {
+        Usuario usuario = new Usuario();
+        usuario.setLogin("user");
+        usuario.setSenha("errada");
+        usuario.setId(10L);
+
+        UsuarioInterface ui = new UsuarioInterface() {
+            @Override
+            public long login() {
+                return usuario.getSenha().equals("123") ? usuario.getId() : 0;
+            }
+        };
+
+        long id = ui.login();
+        assertThat(id).isEqualTo(0L);
+    }
+```
+
+- Teste para realizar o cadastro de usuário
+
+```java
+
+    public void testSalvarUsuario() {
+        String simulatedInput = String.join("\n", "user", "123", "avatar");
+        System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
+
+        UsuarioService usuarioServiceMock = mock(UsuarioService.class);
+        Usuario usuarioSalvo = new Usuario();
+        usuarioSalvo.setLogin("user");
+        usuarioSalvo.setSenha("123");
+        usuarioSalvo.setAvatar("avatar");
+
+        when(usuarioServiceMock.salvarUsuario(any())).thenReturn(usuarioSalvo);
+
+        UsuarioInterface ui = new UsuarioInterface() {
+            @Override
+            public Usuario salvarUsuario() {
+                Scanner sc = new Scanner(System.in);
+                String login = sc.nextLine();
+                String senha = sc.nextLine();
+                String avatar = sc.nextLine();
+
+                Usuario u = new Usuario();
+                u.setLogin(login);
+                u.setSenha(senha);
+                u.setAvatar(avatar);
+                return usuarioServiceMock.salvarUsuario(u);
+            }
+        };
+
+        Usuario result = ui.salvarUsuario();
+        assertThat(result.getLogin()).isEqualTo("user");
+        assertThat(result.getSenha()).isEqualTo("123");
+        assertThat(result.getAvatar()).isEqualTo("avatar");
+    }
+```
+
+- Teste da funcionalidade de listar as estatísticas dos usuários cadastrados
+
+```java
+    public void testListarUsuarios() {
+        List<Usuario> lista = criarListaUsuarios();
+
+        UsuarioService usuarioServiceMock = mock(UsuarioService.class);
+        when(usuarioServiceMock.buscarTodos()).thenReturn(lista);
+
+        UsuarioInterface ui = new UsuarioInterface() {
+            @Override
+            public void listarUsuarios() {
+                List<Usuario> usuarios = usuarioServiceMock.buscarTodos();
+                usuarios.forEach(System.out::println);
+
+                int total = usuarios.stream().mapToInt(Usuario::getQuantidadeSimulacoes).sum();
+                double media = usuarios.stream().mapToDouble(Usuario::getQuantidadeSimulacoesBemSucedidas).sum() /
+                        usuarios.stream().mapToDouble(Usuario::getQuantidadeSimulacoes).sum();
+
+                System.out.println("Total: " + total + ", Média: " + media);
+            }
+        };
+
+        ui.listarUsuarios();
+
+        verify(usuarioServiceMock).buscarTodos();
+    }
+```
+
 ## 🛠️ Tecnologias Utilizadas
 
 - Linguagem: `Java 22`
@@ -555,11 +805,13 @@ public void testFrameDelayNaoAconteceQuandoFrameTimeMaiorOuIgualFrameDelay() {
 
 ## Como Utilizar
 - Abrir projeto na IDE
-- Executar o arquivo Main.java usar as funcionalidades novas
-- 
+- Executar o arquivo Main.java para usar as funcionalidades novas
+
 - Executar os seguintes arquivos de teste:
   - TesteDominio.java
   - TesteEstrutural.java (100% MC/DC Coverege)
   - TesteFronteira.java
-  - Teste
+  - TesteDePropriedades.java
+  - TesteMockitoSimulacao.java
+  - TesteMockitoUsuario.java
 

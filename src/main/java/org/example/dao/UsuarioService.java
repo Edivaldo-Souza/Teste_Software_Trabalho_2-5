@@ -68,4 +68,18 @@ public class UsuarioService {
         }
         return usuarios;
     }
+
+    public Usuario delete(Long id) {
+        Usuario usuario = em.find(Usuario.class, id);
+        if(usuario != null){
+            em.remove(usuario);
+        }
+        if (em != null && em.isOpen()) {
+            em.close();
+        }
+        if (emf != null && emf.isOpen()) {
+            emf.close();
+        }
+        return usuario;
+    }
 }

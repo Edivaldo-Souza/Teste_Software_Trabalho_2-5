@@ -112,6 +112,10 @@ public class UsuarioInterface {
         Usuario usuarioEncontrado = new Usuario();
         return usuarioService.salvarUsuario(usuario);
     }
+    public Usuario buscarPorLogin(String login){
+        UsuarioService usuarioService = new UsuarioService();
+        return usuarioService.buscarPorLogin(login);
+    }
 
     public long login(){
         Scanner sc = new Scanner(System.in);
@@ -143,4 +147,10 @@ public class UsuarioInterface {
                 usuarios.stream().mapToDouble(Usuario::getQuantidadeSimulacoes).sum());
 
     }
+
+    public Usuario delete(Long id){
+        UsuarioService usuarioService = new UsuarioService();
+        return usuarioService.delete(id);
+    }
+
 }

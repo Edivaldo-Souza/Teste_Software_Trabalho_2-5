@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Random;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.example.simulationV1.simulation.ProcessamentoCriaturas.loopPrincipal;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -382,19 +383,25 @@ public class TesteEstrutural {
 
     @Test
     public void testarFluxoDeRealizarSimulacao(){
-        UsuarioInterface usuarioInterface = new UsuarioInterface();
-
-        String input = "2\nUsuario\n123\nAvatar\n1\nUsuario\n123\n1\n3\n3";
-        String input1 = "2\n";
-        String input2 = "Usuario\n123\nAvatar\n";
-        String input3 = "1\n";
-        String input4 = "Usuario\n123\n";
-        String input5 = "1\n";
-        String input6 = "3\n";
+        Random random = new Random();
+        int num = random.nextInt(1000);
+        String input = "Usuario"+num+"\n123\nAvatar\n";
         ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
 
-        usuarioInterface.iniciar();
+        UsuarioInterface usuarioInterface = new UsuarioInterface();
+        Usuario usuario = usuarioInterface.salvarUsuario();
+
+        input = "Usuario"+num+"\n123";
+        in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+
+        usuarioInterface.login();
+
+        usuarioInterface.executarSimulacao(usuario.getId());
+        Usuario usuarioEncontrado = usuarioInterface.delete(usuario.getId());
+
+        assertThat(usuarioEncontrado.getQuantidadeSimulacoes()>0);
     }
 }
 
