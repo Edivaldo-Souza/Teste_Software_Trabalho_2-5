@@ -13,10 +13,15 @@ import java.util.List;
 import java.util.Scanner;
 
 public class UsuarioInterface {
+    private final Scanner sc;
+
+    public UsuarioInterface(Scanner scanner) {
+        this.sc = scanner;
+    }
+
     public void iniciar(){
         boolean shouldRun = true;
         long usuarioAtualId = 0;
-        Scanner sc = new Scanner(System.in);
         boolean shouldLogIn = false;
         while(shouldRun){
             if(shouldLogIn){
@@ -25,7 +30,7 @@ public class UsuarioInterface {
                 System.out.println("2 - Listar usuarios");
                 System.out.println("3 - Sair");
 
-                int op = sc.nextInt();
+                int op = Integer.parseInt(sc.nextLine());
                 switch(op){
                     case 1:
                         executarSimulacao(usuarioAtualId);
@@ -44,7 +49,7 @@ public class UsuarioInterface {
                 System.out.println("2 - Fazer cadastro de usuario");
                 System.out.println("3 - Sair");
 
-                int op = sc.nextInt();
+                int op = Integer.parseInt(sc.nextLine());
                 switch (op) {
                     case 1:
                         usuarioAtualId = login();
@@ -89,7 +94,6 @@ public class UsuarioInterface {
     }
 
     public Usuario salvarUsuario(){
-        Scanner sc = new Scanner(System.in);
         System.out.println("Informe o login do usuario: ");
         String login = sc.nextLine();
         System.out.println("Informe a senha do usuario: ");

@@ -31,8 +31,8 @@ public class testeMockitoUsuario {
         resposta.setStatus(1);
 
         when(usuarioServiceMock.buscarPorId(1L)).thenReturn(usuario);
-
-        UsuarioInterface ui = new UsuarioInterface() {
+        Scanner scanner = new Scanner(System.in);
+        UsuarioInterface ui = new UsuarioInterface(scanner) {
             @Override
             public void executarSimulacao(Long usuarioId) {
                 RespostaProcessamento resposta = new RespostaProcessamento();
@@ -63,7 +63,8 @@ public class testeMockitoUsuario {
         usuario.setSenha("errada");
         usuario.setId(10L);
 
-        UsuarioInterface ui = new UsuarioInterface() {
+        Scanner scanner = new Scanner(System.in);
+        UsuarioInterface ui = new UsuarioInterface(scanner) {
             @Override
             public long login() {
                 return usuario.getSenha().equals("123") ? usuario.getId() : 0;
@@ -86,8 +87,9 @@ public class testeMockitoUsuario {
         usuarioSalvo.setAvatar("avatar");
 
         when(usuarioServiceMock.salvarUsuario(any())).thenReturn(usuarioSalvo);
+        Scanner scanner = new Scanner(System.in);
 
-        UsuarioInterface ui = new UsuarioInterface() {
+        UsuarioInterface ui = new UsuarioInterface(scanner) {
             @Override
             public Usuario salvarUsuario() {
                 Scanner sc = new Scanner(System.in);
@@ -113,11 +115,11 @@ public class testeMockitoUsuario {
     @Test
     public void testListarUsuarios() {
         List<Usuario> lista = criarListaUsuarios();
-
+        Scanner scanner = new Scanner(System.in);
         UsuarioService usuarioServiceMock = mock(UsuarioService.class);
         when(usuarioServiceMock.buscarTodos()).thenReturn(lista);
 
-        UsuarioInterface ui = new UsuarioInterface() {
+        UsuarioInterface ui = new UsuarioInterface(scanner) {
             @Override
             public void listarUsuarios() {
                 List<Usuario> usuarios = usuarioServiceMock.buscarTodos();

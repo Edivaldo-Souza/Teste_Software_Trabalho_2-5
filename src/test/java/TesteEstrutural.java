@@ -15,6 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Random;
+import java.util.Scanner;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.example.simulationV1.simulation.ProcessamentoCriaturas.loopPrincipal;
@@ -389,7 +390,8 @@ public class TesteEstrutural {
         ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
 
-        UsuarioInterface usuarioInterface = new UsuarioInterface();
+        Scanner scanner = new Scanner(System.in);
+        UsuarioInterface usuarioInterface = new UsuarioInterface(scanner);
         Usuario usuario = usuarioInterface.salvarUsuario();
 
         input = "Usuario"+num+"\n123";
