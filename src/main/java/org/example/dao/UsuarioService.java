@@ -21,12 +21,8 @@ public class UsuarioService {
         em.getTransaction().commit();
         Usuario usuarioEncontrado = buscarPorLogin(usuario.getLogin());
 
-        if (em != null && em.isOpen()) {
-            em.close();
-        }
-        if (emf != null && emf.isOpen()) {
-            emf.close();
-        }
+        em.close();
+        emf.close();
 
         return usuarioEncontrado;
     }
@@ -42,12 +38,9 @@ public class UsuarioService {
 
         try {
             Usuario usuario = query.getSingleResult();
-            if (em != null && em.isOpen()) {
-                em.close();
-            }
-            if (emf != null && emf.isOpen()) {
-                emf.close();
-            }
+
+            em.close();
+            emf.close();
             return usuario;
         } catch (NoResultException e) {
             return null;
@@ -60,26 +53,9 @@ public class UsuarioService {
         TypedQuery<Usuario> query = em.createQuery(jpql, Usuario.class);
 
         List<Usuario> usuarios = query.getResultList();
-        if (em != null && em.isOpen()) {
-            em.close();
-        }
-        if (emf != null && emf.isOpen()) {
-            emf.close();
-        }
-        return usuarios;
-    }
 
-    public Usuario delete(Long id) {
-        Usuario usuario = em.find(Usuario.class, id);
-        if(usuario != null){
-            em.remove(usuario);
-        }
-        if (em != null && em.isOpen()) {
-            em.close();
-        }
-        if (emf != null && emf.isOpen()) {
-            emf.close();
-        }
-        return usuario;
+        em.close();
+        emf.close();
+        return usuarios;
     }
 }

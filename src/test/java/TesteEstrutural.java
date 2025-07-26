@@ -381,29 +381,5 @@ public class TesteEstrutural {
         // O tempo total ainda deve ser de no mínimo 1000ms (tempoExecucao)
         assertTrue(duracao >= 1000);
     }
-
-    @Test
-    public void testarFluxoDeRealizarSimulacao(){
-        Random random = new Random();
-        int num = random.nextInt(1000);
-        String input = "Usuario"+num+"\n123\nAvatar\n";
-        ByteArrayInputStream in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
-
-        Scanner scanner = new Scanner(System.in);
-        UsuarioInterface usuarioInterface = new UsuarioInterface(scanner);
-        Usuario usuario = usuarioInterface.salvarUsuario();
-
-        input = "Usuario"+num+"\n123";
-        in = new ByteArrayInputStream(input.getBytes());
-        System.setIn(in);
-
-        usuarioInterface.login();
-
-        usuarioInterface.executarSimulacao(usuario.getId());
-        Usuario usuarioEncontrado = usuarioInterface.delete(usuario.getId());
-
-        assertThat(usuarioEncontrado.getQuantidadeSimulacoes()>0);
-    }
 }
 

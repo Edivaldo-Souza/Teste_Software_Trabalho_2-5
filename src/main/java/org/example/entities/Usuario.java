@@ -74,10 +74,6 @@ public class Usuario {
         this.mediaSimulacoesBemSucedidas = mediaSimulacoesBemSucedidas;
     }
 
-    public Double getPontuacao() {
-        return pontuacao;
-    }
-
     public void setPontuacao(Double pontuacao) {
         this.pontuacao = pontuacao;
     }

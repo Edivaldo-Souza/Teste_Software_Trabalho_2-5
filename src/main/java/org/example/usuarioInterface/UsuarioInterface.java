@@ -64,16 +64,18 @@ public class UsuarioInterface {
                     case 3:
                         shouldRun = false;
                         break;
-                    case 4:
-                        listarUsuarios();
-                        break;
                 }
             }
         }
     }
 
     public void executarSimulacao(Long usuarioId){
-        RespostaProcessamento resposta = ProcessamentoCriaturas.processamento(10,60);
+        System.out.println("Informe a quantidade de criaturas (MAX=199):");
+        int quantCriaturas = sc.nextInt();
+        System.out.println("Informe o tempo de execução da simulação (em segundos): ");
+        int tempoExecucao = sc.nextInt();
+
+        RespostaProcessamento resposta = ProcessamentoCriaturas.processamento(quantCriaturas,tempoExecucao);
 
         UsuarioService usuarioService = new UsuarioService();
 
@@ -86,11 +88,14 @@ public class UsuarioInterface {
                 );
             }
 
+
             usuario.setMediaSimulacoesBemSucedidas(
                     (float) usuario.getQuantidadeSimulacoesBemSucedidas()/usuario.getQuantidadeSimulacoes()
             );
 
             usuarioService.salvarUsuario(usuario);
+            System.out.println("Simulação realizada com sucesso!");
+            sc.nextLine();
     }
 
     public Usuario salvarUsuario(){
@@ -116,13 +121,9 @@ public class UsuarioInterface {
         Usuario usuarioEncontrado = new Usuario();
         return usuarioService.salvarUsuario(usuario);
     }
-    public Usuario buscarPorLogin(String login){
-        UsuarioService usuarioService = new UsuarioService();
-        return usuarioService.buscarPorLogin(login);
-    }
+
 
     public long login(){
-        Scanner sc = new Scanner(System.in);
         System.out.println("Informe o login do usuario: ");
         String login = sc.nextLine();
         System.out.println("Informe a senha do usuario: ");
@@ -132,7 +133,7 @@ public class UsuarioInterface {
 
             Usuario usuarioEncontrado = usuarioService.buscarPorLogin(login);
             if(usuarioEncontrado.getSenha().equals(senha)){
-
+                System.out.println("Login realizado com sucesso!");
                 return usuarioEncontrado.getId();
             }
             else return 0;
@@ -150,11 +151,6 @@ public class UsuarioInterface {
                 +usuarios.stream().mapToDouble(Usuario::getQuantidadeSimulacoesBemSucedidas).sum()/
                 usuarios.stream().mapToDouble(Usuario::getQuantidadeSimulacoes).sum());
 
-    }
-
-    public Usuario delete(Long id){
-        UsuarioService usuarioService = new UsuarioService();
-        return usuarioService.delete(id);
     }
 
 }

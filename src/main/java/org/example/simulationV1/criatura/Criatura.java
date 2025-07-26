@@ -245,8 +245,5 @@ public class Criatura {
         return cluster;
     }
 
-    public boolean isShouldMove() {
-        return shouldMove;
-    }
 
 }

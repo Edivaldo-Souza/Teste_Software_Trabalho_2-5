@@ -548,7 +548,7 @@ public void testFrameDelayNaoAconteceQuandoFrameTimeMaiorOuIgualFrameDelay() {
 }
 ```
 
-### Teste de Propriedades
+### Teste baseados em propriedades
 
 - Avalia a propriedade em que duas criaturas tem suas quantidades de 
 moedas somadas para formar um cluster
