@@ -85,12 +85,12 @@ public class Usuario {
                         " avatar = '%s'\n" +
                         " quantidade de simulações = %d\n" +
                         " média de simulações bem sucedidas = %.4f\n" +
-                        " pontuação = %.2f\n",
-                login != null ? login : "(sem login)",
-                avatar != null ? avatar : "(sem avatar)",
+                        " pontuação = %d\n",
+                login,
+                avatar,
                 quantidadeSimulacoes,
-                mediaSimulacoesBemSucedidas != null ? mediaSimulacoesBemSucedidas : 0.0,
-                quantidadeSimulacoesBemSucedidas != null ? quantidadeSimulacoesBemSucedidas : 0.0
+                mediaSimulacoesBemSucedidas,
+                quantidadeSimulacoesBemSucedidas
         );
     }
 

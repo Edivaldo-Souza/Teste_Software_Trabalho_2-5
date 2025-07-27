@@ -19,6 +19,30 @@ public class UsuarioInterface {
         this.sc = scanner;
     }
 
+    public Integer receberEntrada(){
+        while (true) {
+            try {
+                String linhaDigitada = sc.nextLine();
+                return Integer.parseInt(linhaDigitada);
+
+            } catch (NumberFormatException e) {
+                System.out.println("Erro: Entrada inválida. Por favor, digite apenas um número de opção válida.");
+            }
+        }
+    }
+
+    public String receberEntradaDeTexto(int tamanhoMinino){
+        while(true){
+            String texto = sc.nextLine();
+            if(texto.length() >= tamanhoMinino){
+                return texto;
+            }
+            else{
+                System.out.println("Essa informação precisa ter no mínimo "+tamanhoMinino+" caracteres");
+            }
+        }
+    }
+
     public void iniciar(){
         boolean shouldRun = true;
         long usuarioAtualId = 0;
@@ -30,7 +54,8 @@ public class UsuarioInterface {
                 System.out.println("2 - Listar usuarios");
                 System.out.println("3 - Sair");
 
-                int op = Integer.parseInt(sc.nextLine());
+                int op = receberEntrada();
+
                 switch(op){
                     case 1:
                         executarSimulacao(usuarioAtualId);
@@ -49,7 +74,7 @@ public class UsuarioInterface {
                 System.out.println("2 - Fazer cadastro de usuario");
                 System.out.println("3 - Sair");
 
-                int op = Integer.parseInt(sc.nextLine());
+                int op = receberEntrada();
                 switch (op) {
                     case 1:
                         usuarioAtualId = login();
@@ -59,7 +84,9 @@ public class UsuarioInterface {
                         break;
                     case 2:
                         Usuario u = salvarUsuario();
-                        System.out.println(u);
+                        if(u!=null){
+                            System.out.println(u);
+                        }
                         break;
                     case 3:
                         shouldRun = false;
@@ -70,10 +97,10 @@ public class UsuarioInterface {
     }
 
     public void executarSimulacao(Long usuarioId){
-        System.out.println("Informe a quantidade de criaturas (MAX=199):");
-        int quantCriaturas = sc.nextInt();
+        System.out.println("Informe a quantidade de criaturas (MAX=200):");
+        int quantCriaturas = receberEntrada();
         System.out.println("Informe o tempo de execução da simulação (em segundos): ");
-        int tempoExecucao = sc.nextInt();
+        int tempoExecucao = receberEntrada();
 
         RespostaProcessamento resposta = ProcessamentoCriaturas.processamento(quantCriaturas,tempoExecucao);
 
@@ -94,17 +121,17 @@ public class UsuarioInterface {
             );
 
             usuarioService.salvarUsuario(usuario);
-            System.out.println("Simulação realizada com sucesso!");
+            System.out.println("Simulação executada!");
             sc.nextLine();
     }
 
     public Usuario salvarUsuario(){
         System.out.println("Informe o login do usuario: ");
-        String login = sc.nextLine();
+        String login = receberEntradaDeTexto(4);
         System.out.println("Informe a senha do usuario: ");
-        String senha = sc.nextLine();
+        String senha = receberEntradaDeTexto(3);
         System.out.println("Informe o avatar do usuario: ");
-        String avatar = sc.nextLine();
+        String avatar = receberEntradaDeTexto(4);
 
         Usuario usuario = new Usuario();
         usuario.setLogin(login);
@@ -118,25 +145,32 @@ public class UsuarioInterface {
 
         UsuarioService usuarioService = new UsuarioService();
 
-        Usuario usuarioEncontrado = new Usuario();
-        return usuarioService.salvarUsuario(usuario);
+        Usuario usuarioExistente = usuarioService.buscarPorLogin(login);
+        if(usuarioExistente != null){
+            System.out.println("Já existe um usuário com o login = "+login);
+            return null;
+        }
+        else return usuarioService.salvarUsuario(usuario);
     }
 
 
     public long login(){
         System.out.println("Informe o login do usuario: ");
-        String login = sc.nextLine();
+        String login = receberEntradaDeTexto(4);
         System.out.println("Informe a senha do usuario: ");
-        String senha = sc.nextLine();
+        String senha = receberEntradaDeTexto(3);
 
         UsuarioService usuarioService = new UsuarioService();
 
             Usuario usuarioEncontrado = usuarioService.buscarPorLogin(login);
-            if(usuarioEncontrado.getSenha().equals(senha)){
+            if(usuarioEncontrado!=null && usuarioEncontrado.getSenha().equals(senha)){
                 System.out.println("Login realizado com sucesso!");
                 return usuarioEncontrado.getId();
             }
-            else return 0;
+            else {
+                System.out.println("Login falhou!");
+                return 0;
+            }
     }
 
     public void listarUsuarios(){
@@ -147,9 +181,9 @@ public class UsuarioInterface {
 
         System.out.println("Quantidade total de simulações = "
                 +usuarios.stream().mapToInt(Usuario::getQuantidadeSimulacoes).sum());
-        System.out.println("Média de simulações bem sucedidas totais = "
-                +usuarios.stream().mapToDouble(Usuario::getQuantidadeSimulacoesBemSucedidas).sum()/
-                usuarios.stream().mapToDouble(Usuario::getQuantidadeSimulacoes).sum());
+        System.out.println(String.format("Média de simulações bem sucedidas totais = %.4f",
+                usuarios.stream().mapToDouble(Usuario::getQuantidadeSimulacoesBemSucedidas).sum()/
+                usuarios.stream().mapToDouble(Usuario::getQuantidadeSimulacoes).sum()));
 
     }
 

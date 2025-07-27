@@ -2,6 +2,7 @@
 import io.github.libsdl4j.api.rect.SDL_Rect;
 import io.github.libsdl4j.api.render.SDL_Renderer;
 import org.example.entities.Usuario;
+import org.example.simulationV1.cluster.Cluster;
 import org.example.simulationV1.criatura.Criatura;
 import org.example.simulationV1.simulation.ProcessamentoCriaturas;
 import org.example.usuarioInterface.UsuarioInterface;
@@ -52,6 +53,12 @@ public class TesteEstrutural {
     public void testQuantidadeCriaturasMaiorOuIgual2() {
         int resultado = ProcessamentoCriaturas.processamento(2, 100).getStatus(); // Valor igual ou maior que 2
         assertEquals(1, resultado, "Deve retornar 1 quando a quantidade de criaturas for suficiente");
+    }
+
+    @Test
+    public void testQuantidadeCriaturasIgual200() {
+        int resultado = ProcessamentoCriaturas.processamento(200, 100).getStatus();
+        assertEquals(1, resultado, "Deve retornar 1 quando a quantidade de criaturas for a igual 200");
     }
 
     @Test

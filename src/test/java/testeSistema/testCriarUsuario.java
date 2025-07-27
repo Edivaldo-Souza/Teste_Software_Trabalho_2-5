@@ -70,7 +70,7 @@ public class testCriarUsuario {
                 " avatar = 'Avatar'\n" +
                 " quantidade de simulações = 0\n" +
                 " média de simulações bem sucedidas = 0,0000\n" +
-                " pontuação = 0,00";
+                " pontuação = 0";
 
 
         provideInput(inputStream);

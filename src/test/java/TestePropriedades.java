@@ -12,6 +12,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.example.simulationV1.simulation.ProcessamentoCriaturas.gerarCriaturas;
 
 public class TestePropriedades{
+    // Teste que verifica se a quantidade de moedas de um cluster no momento em que ele
+    // é formado corresponde a soma das quantidades de moedas das duas criaturas que deram
+    // origem ao cluster
     @Property
     public void juntarQuantidadeDeMoedasDeCriaturasAoSeTornaremUmCluster(
             @Size(2)
@@ -32,6 +35,8 @@ public class TestePropriedades{
         );
     }
 
+    // Teste que verifica se a quantidade de moedas que um cluster rouba de um criatura
+    // corresponde a metade das moedas que aquela criatura possui no momento
     @Property
     public void quandoClusterSeAproximarDeCriaturaRoubarMetadeDeSuasMoedas(
             @Size(2)
@@ -54,8 +59,10 @@ public class TestePropriedades{
         );
     }
 
+    // Teste que verifica a capacidade do cluster de ser composto por duas
+    // ou mais criaturas
     @Property
-    public void clusterPodeSerFormadoPorUmaOuMaisCriaturas(
+    public void clusterPodeSerFormadoPorDuasOuMaisCriaturas(
             @ForAll
             @IntRange(min=2, max=100) Integer quantidadeDeCriaturas
     ){
@@ -72,6 +79,8 @@ public class TestePropriedades{
         assertThat(criaturas[0].getCluster().getTotalDeCriaturas()).isEqualTo(quantidadeDeCriaturas);
     }
 
+    // Teste que verifica se a criatura guardião, no início de qualquer simulacao,
+    // não possui moedas
     @Property
     public void quantidadeInicialDeMoedasDaCriaturaGuardiaoDeveSerZero(
             @ForAll
@@ -81,6 +90,8 @@ public class TestePropriedades{
         assertThat(criaturas[criaturas.length-1].getMoedas()).isEqualTo(0);
     }
 
+    // Teste que verifica se a quantidade de moedas que a criatura guardião rouba de um
+    // cluster corresponde a todas as moedas armazenadas pelo cluster no momento do roubo
     @Property
     public void guardiaoRoubaTodasAsMoedasDeUmCluster(
             @Size(2)

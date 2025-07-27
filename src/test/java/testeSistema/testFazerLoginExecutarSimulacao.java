@@ -72,6 +72,7 @@ public class testFazerLoginExecutarSimulacao {
                 "1" + System.lineSeparator() +
                 "10" + System.lineSeparator() +
                 "60" + System.lineSeparator() +
+                System.lineSeparator() +
                 "3" + System.lineSeparator() +
                 "3" + System.lineSeparator();
 
@@ -80,7 +81,7 @@ public class testFazerLoginExecutarSimulacao {
                 " avatar = 'Avatar'\n" +
                 " quantidade de simulações = 0\n" +
                 " média de simulações bem sucedidas = 0,0000\n" +
-                " pontuação = 0,00";
+                " pontuação = 0";
 
 
         provideInput(inputStream);
@@ -94,7 +95,7 @@ public class testFazerLoginExecutarSimulacao {
         assertTrue(saida.contains("Informe o login do usuario:"));
         assertTrue(saida.contains(usuarioCadastrado));
         assertTrue(saida.contains("Login realizado com sucesso!"));
-        assertTrue(saida.contains("Simulação realizada com sucesso!"));
+        assertTrue(saida.contains("Simulação executada!"));
     }
 
 

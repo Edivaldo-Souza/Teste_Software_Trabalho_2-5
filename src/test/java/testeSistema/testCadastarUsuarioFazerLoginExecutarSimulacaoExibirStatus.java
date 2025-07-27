@@ -1,5 +1,7 @@
 package testeSistema;
 
+import io.github.libsdl4j.api.event.SDL_Event;
+import io.github.libsdl4j.api.event.events.SDL_KeyboardEvent;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -14,6 +16,10 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
 
+import static io.github.libsdl4j.api.event.SDL_EventType.SDL_KEYDOWN;
+import static io.github.libsdl4j.api.event.SdlEvents.SDL_PushEvent;
+import static io.github.libsdl4j.api.event.SdlEventsConst.SDL_PRESSED;
+import static io.github.libsdl4j.api.keycode.SDL_Keycode.SDLK_RETURN;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class testCadastarUsuarioFazerLoginExecutarSimulacaoExibirStatus {
@@ -70,6 +76,7 @@ public class testCadastarUsuarioFazerLoginExecutarSimulacaoExibirStatus {
                 "1" + System.lineSeparator() +
                 "10" + System.lineSeparator() +
                 "60" + System.lineSeparator() +
+                System.lineSeparator() +
                 "2" + System.lineSeparator() +
                 "3" + System.lineSeparator() +
                 "3" + System.lineSeparator();
@@ -79,7 +86,7 @@ public class testCadastarUsuarioFazerLoginExecutarSimulacaoExibirStatus {
                 " avatar = 'Avatar'\n" +
                 " quantidade de simulações = 0\n" +
                 " média de simulações bem sucedidas = 0,0000\n" +
-                " pontuação = 0,00";
+                " pontuação = 0";
 
 
         provideInput(inputStream);
@@ -93,7 +100,7 @@ public class testCadastarUsuarioFazerLoginExecutarSimulacaoExibirStatus {
         assertTrue(saida.contains("Informe o login do usuario:"));
         assertTrue(saida.contains(usuarioCadastrado));
         assertTrue(saida.contains("Login realizado com sucesso!"));
-        assertTrue(saida.contains("Simulação realizada com sucesso!"));
+        assertTrue(saida.contains("Simulação executada!"));
         assertTrue(saida.contains("Usuario user2 :\n" + " avatar = 'Avatar'\n" + " quantidade de simulações = 1\n"));
     }
 }

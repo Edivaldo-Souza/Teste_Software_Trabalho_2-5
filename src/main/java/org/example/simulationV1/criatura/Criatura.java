@@ -108,7 +108,7 @@ public class Criatura {
 
         collisionBox.y = (int) posY;
 
-        if(cluster!=null && cluster.getCriaturas()!=null && !cluster.getCriaturas().isEmpty()){
+        if(cluster!=null){
             for(int i = 0; i < cluster.getCriaturas().size(); i++){
                 switch (i) {
                     case 0:

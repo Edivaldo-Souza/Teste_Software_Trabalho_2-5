@@ -2,6 +2,7 @@ package org.example.simulationV1.simulation;
 
 import io.github.libsdl4j.api.event.SDL_Event;
 import io.github.libsdl4j.api.event.events.SDL_TextInputEvent;
+import io.github.libsdl4j.api.messagebox.SDL_MessageBoxButtonData;
 import io.github.libsdl4j.api.render.SDL_Renderer;
 import io.github.libsdl4j.api.video.SDL_Window;
 import org.example.simulationV1.cluster.Cluster;
@@ -17,8 +18,12 @@ import static io.github.libsdl4j.api.Sdl.SDL_Init;
 import static io.github.libsdl4j.api.Sdl.SDL_Quit;
 import static io.github.libsdl4j.api.SdlSubSystemConst.SDL_INIT_EVERYTHING;
 import static io.github.libsdl4j.api.error.SdlError.SDL_GetError;
+import static io.github.libsdl4j.api.event.SDL_EventType.SDL_KEYDOWN;
 import static io.github.libsdl4j.api.event.SDL_EventType.SDL_QUIT;
 import static io.github.libsdl4j.api.event.SdlEvents.SDL_PollEvent;
+import static io.github.libsdl4j.api.event.SdlEvents.SDL_PushEvent;
+import static io.github.libsdl4j.api.event.SdlEventsConst.SDL_PRESSED;
+import static io.github.libsdl4j.api.keycode.SDL_Keycode.SDLK_RETURN;
 import static io.github.libsdl4j.api.messagebox.SDL_MessageBoxFlags.SDL_MESSAGEBOX_INFORMATION;
 import static io.github.libsdl4j.api.messagebox.SdlMessagebox.SDL_ShowSimpleMessageBox;
 import static io.github.libsdl4j.api.render.SDL_RendererFlags.SDL_RENDERER_ACCELERATED;
@@ -181,8 +186,6 @@ public class ProcessamentoCriaturas {
 
             while (SDL_PollEvent(evt) != 0) {
                 switch (evt.type) {
-                    case SDL_QUIT:
-                        shouldRun = false;
                 }
             }
 
@@ -210,7 +213,8 @@ public class ProcessamentoCriaturas {
                             criaturas[i],
                             criaturas[j])) {
 
-                      if (criaturas[i].getCluster() == null && criaturas[j].getCluster() == null  && !criaturas[j].guardiao) {
+                      if (criaturas[i].getCluster() == null && criaturas[j].getCluster() == null  && !criaturas[j].guardiao
+                       && shouldCreateCluster) {
                           Cluster novoCluster = new Cluster();
                           criaturas[j].hasCollision = true;
                           criaturas[j].consumedByCluster = true;
@@ -218,7 +222,7 @@ public class ProcessamentoCriaturas {
                           novoCluster.setMoedasDoCluster(criaturas[i].getMoedas()+criaturas[j].getMoedas());
                           criaturas[i].cluster = novoCluster;
                       } else if (criaturas[i].getCluster() != null && criaturas[j].getCluster() == null
-                              && !criaturas[j].guardiao) {
+                              && !criaturas[j].guardiao && shouldCreateCluster) {
                           //if(criaturas[i].getCluster().getCriaturas().size()<4){
                               criaturas[j].hasCollision = true;
                               criaturas[j].consumedByCluster = true;
@@ -226,7 +230,7 @@ public class ProcessamentoCriaturas {
                               criaturas[i].getCluster().receiveCoins(criaturas[j].getMoedas());
                           //}
                       } else if (criaturas[i].getCluster() == null && criaturas[j].getCluster() != null
-                              && !criaturas[i].guardiao) {
+                              && !criaturas[i].guardiao && shouldCreateCluster) {
                           //if(criaturas[j].getCluster().getCriaturas().size()<4) {
                               criaturas[i].hasCollision = true;
                               criaturas[i].consumedByCluster = true;
@@ -280,7 +284,7 @@ public class ProcessamentoCriaturas {
         return notRobbedCreatures;
     }
 
-    private static void tratarColisao(Criatura[] criaturas, int i, int j) {
+    public static void tratarColisao(Criatura[] criaturas, int i, int j) {
         float dx = (criaturas[i].getCollisionBox().x + Criatura.CRIATURA_LARGURA / 2F)
                 - (criaturas[j].getCollisionBox().x + Criatura.CRIATURA_LARGURA / 2F);
         float dy = (criaturas[i].getCollisionBox().y + Criatura.CRIATURA_ALTURA / 2F)
@@ -335,7 +339,7 @@ public class ProcessamentoCriaturas {
             tempQuantidadeMoedas = criaturas[j].getCluster().giveCoins(false);
             criaturas[i].getCluster().receiveCoins(tempQuantidadeMoedas);
         }
-        else if(criaturas[i].getCluster()!=null && criaturas[j].getCluster()==null){
+        else if(criaturas[i].getCluster()!=null){
             if(criaturas[j].guardiao){
                 criaturas[j].shouldMove = true;
                 tempQuantidadeMoedas = criaturas[i].getCluster().giveCoins(true);
