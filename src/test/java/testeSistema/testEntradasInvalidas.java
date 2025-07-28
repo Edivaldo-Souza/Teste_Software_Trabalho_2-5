@@ -8,6 +8,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.awt.*;
+import java.awt.event.InputEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -190,6 +192,31 @@ public class testEntradasInvalidas {
 
         provideInput(inputStream);
         UsuarioInterface usuarioInterface = new UsuarioInterface(new Scanner(System.in));
+
+        new Thread(()->{
+            try {
+                Thread.sleep(7000);
+                Robot robot = new Robot();
+
+                robot.mouseMove(880,420);
+
+                Thread.sleep(1000);
+                robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+                robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+
+                Thread.sleep(1000);
+                robot.mouseMove(900,780);
+
+                Thread.sleep(500);
+                robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+                robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+
+            } catch (AWTException e) {
+                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
 
         usuarioInterface.iniciar();
 

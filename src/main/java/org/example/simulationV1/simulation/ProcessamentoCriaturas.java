@@ -44,25 +44,30 @@ public class ProcessamentoCriaturas {
     public static final int WINDOW_HEIGHT = 768;
     public static final int FPS = 60;
     public static final int FRAME_DELAY = 1000/FPS;
+    public static volatile boolean isMessageBoxVisible = false;
 
     public static RespostaProcessamento processamento(int quantidadeCriaturas, int tempoExecucao) {
         RespostaProcessamento respostaProcessamento = new RespostaProcessamento();
 
         if (quantidadeCriaturas < 2) {
+            isMessageBoxVisible = true;
             SDL_ShowSimpleMessageBox(
                     SDL_MESSAGEBOX_INFORMATION,
                     "Info",
                     "Quantidade de criaturas inferior ao necessário. Mínimo: 2 criaturas",
                     null);
+            isMessageBoxVisible = false;
             respostaProcessamento.setStatus(0);
             return respostaProcessamento;
         }
         if (quantidadeCriaturas > 200) {
+            isMessageBoxVisible = true;
             SDL_ShowSimpleMessageBox(
                     SDL_MESSAGEBOX_INFORMATION,
                     "Info",
                     "Quantidade de criaturas acima do máximo. Máximo: 200 criaturas",
                     null);
+            isMessageBoxVisible = false;
             respostaProcessamento.setStatus(0);
             return respostaProcessamento;
         }
@@ -260,11 +265,13 @@ public class ProcessamentoCriaturas {
                   }
                 }
                 if(SDL_GetTicks()>=tempoExecucao*1000){
+                    isMessageBoxVisible = true;
                     SDL_ShowSimpleMessageBox(
                             SDL_MESSAGEBOX_INFORMATION,
                             "Info",
                             "Tempo de execução excedido",
                             null);
+                    isMessageBoxVisible = false;
                     return 0;
                 }
             }
@@ -385,7 +392,9 @@ public class ProcessamentoCriaturas {
             stb.append("\n");
         }
 
+        isMessageBoxVisible = true;
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Info", stb.toString(), null);
+        isMessageBoxVisible = false;
     }
 
 }

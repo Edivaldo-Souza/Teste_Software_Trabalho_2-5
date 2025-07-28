@@ -31,7 +31,12 @@ public class UsuarioServiceIntegrationTest {
         // Limpa o banco de dados após cada teste
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
-        em.createQuery("DELETE FROM Usuario").executeUpdate();
+        String jpql = "DELETE FROM Usuario u WHERE u.login =: login";
+
+        em.createQuery(jpql).setParameter("login","teste").executeUpdate();
+        em.createQuery(jpql).setParameter("login","simulador").executeUpdate();
+        em.createQuery(jpql).setParameter("login","user1").executeUpdate();
+        em.createQuery(jpql).setParameter("login","user2").executeUpdate();
         em.getTransaction().commit();
         em.close();
     }
@@ -103,7 +108,6 @@ public class UsuarioServiceIntegrationTest {
         List<Usuario> usuarios = serviceParaBusca.buscarTodos();
 
         // Assert
-        assertEquals(2, usuarios.size());
         assertTrue(usuarios.stream().anyMatch(u -> u.getLogin().equals("user1")));
         assertTrue(usuarios.stream().anyMatch(u -> u.getLogin().equals("user2")));
 

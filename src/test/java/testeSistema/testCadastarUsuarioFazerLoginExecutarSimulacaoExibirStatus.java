@@ -5,11 +5,15 @@ import io.github.libsdl4j.api.event.events.SDL_KeyboardEvent;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import org.example.simulationV1.simulation.ProcessamentoCriaturas;
 import org.example.usuarioInterface.UsuarioInterface;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.awt.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -22,7 +26,7 @@ import static io.github.libsdl4j.api.event.SdlEventsConst.SDL_PRESSED;
 import static io.github.libsdl4j.api.keycode.SDL_Keycode.SDLK_RETURN;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class testCadastarUsuarioFazerLoginExecutarSimulacaoExibirStatus {
+public class testCadastarUsuarioFazerLoginExecutarSimulacaoExibirStatus extends FecharJanelaAutomatico{
     private final InputStream originalSystemIn = System.in;
     private final PrintStream originalSystemOut = System.out;
 
@@ -90,7 +94,10 @@ public class testCadastarUsuarioFazerLoginExecutarSimulacaoExibirStatus {
 
 
         provideInput(inputStream);
+
         UsuarioInterface usuarioInterface = new UsuarioInterface(new Scanner(System.in));
+
+        fecharJanelaAutomatico();
 
         usuarioInterface.iniciar();
 

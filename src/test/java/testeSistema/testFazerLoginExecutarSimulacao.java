@@ -3,11 +3,15 @@ package testeSistema;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import org.example.simulationV1.simulation.ProcessamentoCriaturas;
 import org.example.usuarioInterface.UsuarioInterface;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.awt.*;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -17,7 +21,7 @@ import java.util.Scanner;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class testFazerLoginExecutarSimulacao {
+public class testFazerLoginExecutarSimulacao extends FecharJanelaAutomatico{
 
     private final InputStream originalSystemIn = System.in;
     private final PrintStream originalSystemOut = System.out;
@@ -70,7 +74,7 @@ public class testFazerLoginExecutarSimulacao {
                 "user2" + System.lineSeparator() +
                 "123" + System.lineSeparator() +
                 "1" + System.lineSeparator() +
-                "10" + System.lineSeparator() +
+                "20" + System.lineSeparator() +
                 "60" + System.lineSeparator() +
                 System.lineSeparator() +
                 "3" + System.lineSeparator() +
@@ -86,6 +90,8 @@ public class testFazerLoginExecutarSimulacao {
 
         provideInput(inputStream);
         UsuarioInterface usuarioInterface = new UsuarioInterface(new Scanner(System.in));
+
+        fecharJanelaAutomatico();
 
         usuarioInterface.iniciar();
 

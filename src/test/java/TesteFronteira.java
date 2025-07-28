@@ -3,7 +3,11 @@ import io.github.libsdl4j.api.rect.SDL_Rect;
 import org.example.simulationV1.criatura.Criatura;
 import org.example.simulationV1.simulation.ProcessamentoCriaturas;
 import org.junit.jupiter.api.Test;
+import testeSistema.FecharJanelaAutomatico;
 
+
+import java.awt.*;
+import java.awt.event.KeyEvent;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.example.simulationV1.criatura.Criatura.CRIATURA_LARGURA;
@@ -11,30 +15,65 @@ import static org.example.simulationV1.simulation.ProcessamentoCriaturas.WINDOW_
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TesteFronteira {
+public class TesteFronteira extends FecharJanelaAutomatico {
+
+    public void fecharJanelaAutomatico(boolean segundaJanela){
+        new Thread(()->{
+            try {
+                Robot robot = new Robot();
+
+                while(true) {
+                    if(ProcessamentoCriaturas.isMessageBoxVisible) {
+                        Thread.sleep(500);
+                        robot.keyPress(KeyEvent.VK_ENTER);
+                        robot.keyRelease(KeyEvent.VK_ENTER);
+                        break;
+                    }
+                }
+                if(segundaJanela){
+                    while(true) {
+                        if(ProcessamentoCriaturas.isMessageBoxVisible) {
+                            Thread.sleep(500);
+                            robot.keyPress(KeyEvent.VK_ENTER);
+                            robot.keyRelease(KeyEvent.VK_ENTER);
+                            break;
+                        }
+                    }
+                }
+            } catch (AWTException e) {
+                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+    }
 
     //Caso de teste onde a quantidade de criaturas excede o valor máximo ( n <= 200 criaturas)
     // O valor de N é redefinido para 200
     @Test
     public void casoMaisDe200Criaturas() {
+        fecharJanelaAutomatico();
         assertThat(ProcessamentoCriaturas.processamento(300,60).getStatus()).isEqualTo(0);
     }
 
     //Caso de teste onde a quantidade de criaturas é inferior ao valor mínimo ( n >= 2 criaturas)
     @Test
     public void casoMenosDeDuasCriaturas() {
+        fecharJanelaAutomatico();
         assertThat(ProcessamentoCriaturas.processamento(1,60).getStatus()).isEqualTo(0);
     }
 
     // Caso de teste onde a quantidade de criaturas é igual mínimo possível (2 criaturas)
     @Test
     public void casoApenasDuasCriaturas(){
+        fecharJanelaAutomatico();
         assertThat(ProcessamentoCriaturas.processamento(2,60).getStatus()).isEqualTo(1);
     }
 
     //Caso de teste onde o tempo de execução é inferior ao necessário para terminar uma simulação (1 segundo)
     @Test
-    public void casoMenorTempoDeExecucao() {
+    public void casoMenorTempoDeExecucao(){
+        fecharJanelaAutomatico(true);
         assertThat(ProcessamentoCriaturas.processamento(2, 1).getStatus()).isEqualTo(0);
     }
 

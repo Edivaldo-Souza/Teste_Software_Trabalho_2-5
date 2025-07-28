@@ -9,8 +9,11 @@ import org.example.usuarioInterface.UsuarioInterface;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import testeSistema.FecharJanelaAutomatico;
 
 
+import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -24,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 
-public class TesteEstrutural {
+public class TesteEstrutural extends FecharJanelaAutomatico {
 
     private final PrintStream originalOut = System.out;
     private final InputStream originalIn = System.in;
@@ -45,24 +48,28 @@ public class TesteEstrutural {
 
     @Test
     public void testQuantidadeCriaturasMenorQue2() {
+        fecharJanelaAutomatico();
         int resultado = ProcessamentoCriaturas.processamento(1, 100).getStatus(); // Valor menor que 2
         assertEquals(0, resultado, "Deve retornar 0 quando a quantidade de criaturas for menor que 2");
     }
 
     @Test
     public void testQuantidadeCriaturasMaiorOuIgual2() {
+        fecharJanelaAutomatico();
         int resultado = ProcessamentoCriaturas.processamento(2, 100).getStatus(); // Valor igual ou maior que 2
         assertEquals(1, resultado, "Deve retornar 1 quando a quantidade de criaturas for suficiente");
     }
 
     @Test
     public void testQuantidadeCriaturasIgual200() {
+        fecharJanelaAutomatico();
         int resultado = ProcessamentoCriaturas.processamento(200, 100).getStatus();
         assertEquals(1, resultado, "Deve retornar 1 quando a quantidade de criaturas for a igual 200");
     }
 
     @Test
     public void testQuantidadeCriaturasMaiorQue200() {
+        fecharJanelaAutomatico();
         int resultado = ProcessamentoCriaturas.processamento(201, 100).getStatus();
         assertEquals(0, resultado, "Deve retornar 0 quando a quantidade de criaturas for maior que 200");
     }
@@ -246,6 +253,7 @@ public class TesteEstrutural {
 
         @Test
     public void testLoopPrincipalComTempoExcedido() {
+        fecharJanelaAutomatico();
         // Criaturas que não colidem
         Criatura c1 = new Criatura() {
             @Override
@@ -318,7 +326,47 @@ public class TesteEstrutural {
     }
 
     @Test
+    public void testLoopPrincipalComCondicaoDeCriarCluster() {
+        Criatura c1 = new Criatura() {
+            @Override
+            public void move() {}
+            @Override
+            public SDL_Rect getCollisionBox() {
+                SDL_Rect r = new SDL_Rect();
+                r.x = 0; r.y = 0; r.w = 10; r.h = 10;
+                return r;
+            }
+            @Override
+            public void render(SDL_Renderer renderer) {}
+        };
+
+        Criatura c2 = new Criatura() {
+            @Override
+            public void move() {}
+            @Override
+            public SDL_Rect getCollisionBox() {
+                SDL_Rect r = new SDL_Rect();
+                r.x = 0; r.y = 0; r.w = 10; r.h = 10;
+                return r;
+            }
+            @Override
+            public void render(SDL_Renderer renderer) {}
+        };
+
+        Criatura[] criaturas = new Criatura[]{c1, c2};
+        c1.guardiao = true;
+        c2.cluster = new Cluster();
+
+        int tempoExecucao = 10;
+
+        int resultado = loopPrincipal(null, criaturas, tempoExecucao);
+        assertEquals(1, resultado);
+    }
+
+
+    @Test
     public void testFrameDelayQuandoFrameTimeEhMenorQueFrameDelay() {
+        fecharJanelaAutomatico();
         long inicio = System.currentTimeMillis();
 
         Criatura c1 = new Criatura() {
@@ -354,6 +402,7 @@ public class TesteEstrutural {
 
     @Test
     public void testFrameDelayNaoAconteceQuandoFrameTimeMaiorOuIgualFrameDelay() {
+        fecharJanelaAutomatico();
         Criatura c1 = new Criatura() {
             @Override public void move() {
                 try { Thread.sleep(20); } catch (InterruptedException e) {}

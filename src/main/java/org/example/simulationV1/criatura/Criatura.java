@@ -127,6 +127,9 @@ public class Criatura {
                         cluster.getCriaturas().get(i).setPosX(collisionBox.x);
                         cluster.getCriaturas().get(i).setPosY(collisionBox.y-CRIATURA_ALTURA);
                         break;
+                    default:
+                        cluster.getCriaturas().get(i).setPosX(collisionBox.x);
+                        cluster.getCriaturas().get(i).setPosY(collisionBox.y);
                 }
             }
         }
