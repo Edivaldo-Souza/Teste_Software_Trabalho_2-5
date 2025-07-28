@@ -16,45 +16,7 @@ import java.util.Scanner;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class testCriarUsuario {
-
-    private final InputStream originalSystemIn = System.in;
-    private final PrintStream originalSystemOut = System.out;
-
-    private ByteArrayOutputStream outputStream;
-
-    private void deleteUser(){
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("meuPU_H2");
-        EntityManager em = emf.createEntityManager();
-
-        em.getTransaction().begin();
-        String jpql = "DELETE FROM Usuario u WHERE u.login = :login";
-
-        int query = em.createQuery(jpql).setParameter("login","user2").executeUpdate();
-
-        em.getTransaction().commit();
-        em.close();
-        emf.close();
-    }
-
-    @BeforeEach
-    public void setUp() {
-        outputStream = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(outputStream));
-        deleteUser();
-    }
-
-    @AfterEach
-    public void tearDown() {
-        System.setIn(originalSystemIn);
-        System.setOut(originalSystemOut);
-        deleteUser();
-    }
-
-    private void provideInput(String data) {
-        ByteArrayInputStream testIn = new ByteArrayInputStream(data.getBytes());
-        System.setIn(testIn);
-    }
+public class testCriarUsuario extends TesteSistemaBase{
 
     // Teste para validar a criação de um usuário no sistema
     @Test

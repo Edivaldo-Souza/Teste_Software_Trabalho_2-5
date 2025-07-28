@@ -45,6 +45,7 @@ public class ProcessamentoCriaturas {
     public static final int FPS = 60;
     public static final int FRAME_DELAY = 1000/FPS;
     public static volatile boolean isMessageBoxVisible = false;
+    private static Integer[][] idsDasCriaturas;
 
     public static RespostaProcessamento processamento(int quantidadeCriaturas, int tempoExecucao) {
         RespostaProcessamento respostaProcessamento = new RespostaProcessamento();
@@ -182,6 +183,7 @@ public class ProcessamentoCriaturas {
         int notRobbedCreatures = criaturas.length;
         boolean shouldCreateCluster = false;
         byte multiplierR = 1, multiplierG = 1, multiplierB  = 1;
+        idsDasCriaturas = new Integer[criaturas.length][criaturas.length];
 
         while (shouldRun) {
             frameStart = SDL_GetTicks();
@@ -226,6 +228,8 @@ public class ProcessamentoCriaturas {
                           novoCluster.addCriatura(criaturas[j]);
                           novoCluster.setMoedasDoCluster(criaturas[i].getMoedas()+criaturas[j].getMoedas());
                           criaturas[i].cluster = novoCluster;
+                          idsDasCriaturas[i][0] = i;
+                          idsDasCriaturas[i][j] = j;
                       } else if (criaturas[i].getCluster() != null && criaturas[j].getCluster() == null
                               && !criaturas[j].guardiao && shouldCreateCluster) {
                           //if(criaturas[i].getCluster().getCriaturas().size()<4){
@@ -233,6 +237,7 @@ public class ProcessamentoCriaturas {
                               criaturas[j].consumedByCluster = true;
                               criaturas[i].getCluster().addCriatura(criaturas[j]);
                               criaturas[i].getCluster().receiveCoins(criaturas[j].getMoedas());
+                              idsDasCriaturas[i][j]=j;
                           //}
                       } else if (criaturas[i].getCluster() == null && criaturas[j].getCluster() != null
                               && !criaturas[i].guardiao && shouldCreateCluster) {
@@ -241,6 +246,7 @@ public class ProcessamentoCriaturas {
                               criaturas[i].consumedByCluster = true;
                               criaturas[j].getCluster().addCriatura(criaturas[i]);
                               criaturas[j].getCluster().receiveCoins(criaturas[i].getMoedas());
+                              idsDasCriaturas[j][i] = i;
                           //}
                       }
                       else if(criaturas[i].getCluster()!=criaturas[j].getCluster()){
@@ -254,6 +260,17 @@ public class ProcessamentoCriaturas {
                     for(Criatura c : criaturas) {
                         if(!c.hasCollision){
                             notRobbedCreatures++;
+                        }
+                    }
+
+                    if(notRobbedCreatures==2){
+                        int cont = 0;
+                        for(Criatura c : criaturas) {
+                            if(!c.hasCollision && c.cluster==null){ cont++; }
+                        }
+                        if(cont==2){
+                            SDL_Delay(1000);
+                            shouldRun = false;
                         }
                     }
 
@@ -288,7 +305,7 @@ public class ProcessamentoCriaturas {
                 SDL_Delay(FRAME_DELAY - frameTime);
             }
         }
-        return notRobbedCreatures;
+        return 1;
     }
 
     public static void tratarColisao(Criatura[] criaturas, int i, int j) {
@@ -383,6 +400,14 @@ public class ProcessamentoCriaturas {
                     .append(dc.format(criaturas[i].getRandom())).append(" * ")
                     .append(dc.format(criaturas[i].getMoedas())).append(" = ")
                     .append(dc.format(criaturas[i].getXi())).append("\n");
+
+            for(int i2 = 0; i2 < criaturas.length; i2++) {
+                for (int j = 0; j < criaturas.length; j++) {
+                    if (idsDasCriaturas[i2][j] != null && idsDasCriaturas[i2][j] == i) {
+                        stb.append("Pertence ao cluster = ").append(idsDasCriaturas[i2][0]).append("\n");
+                    }
+                }
+            }
 
             if(criaturas[i].getCluster()!=null){
                 stb.append("Quantidade de moedas do cluster: ")

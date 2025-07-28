@@ -363,6 +363,58 @@ public class TesteEstrutural extends FecharJanelaAutomatico {
         assertEquals(1, resultado);
     }
 
+    @Test
+    public void testLoopPrincipalComCondicaoDeSucessoDuasCriaturas() {
+        fecharJanelaAutomatico();
+        Criatura c1 = new Criatura() {
+            @Override
+            public void move() {}
+            @Override
+            public SDL_Rect getCollisionBox() {
+                SDL_Rect r = new SDL_Rect();
+                r.x = 0; r.y = 0; r.w = 10; r.h = 10;
+                return r;
+            }
+            @Override
+            public void render(SDL_Renderer renderer) {}
+        };
+
+        Criatura c2 = new Criatura() {
+            @Override
+            public void move() {}
+            @Override
+            public SDL_Rect getCollisionBox() {
+                SDL_Rect r = new SDL_Rect();
+                r.x = 0; r.y = 0; r.w = 10; r.h = 10;
+                return r;
+            }
+            @Override
+            public void render(SDL_Renderer renderer) {}
+        };
+
+        Criatura c3 = new Criatura() {
+            @Override
+            public void move() {}
+            @Override
+            public SDL_Rect getCollisionBox() {
+                SDL_Rect r = new SDL_Rect();
+                r.x = 20; r.y = 20; r.w = 10; r.h = 10;
+                return r;
+            }
+            @Override
+            public void render(SDL_Renderer renderer) {}
+        };
+
+        Criatura[] criaturas = new Criatura[]{c1, c2, c3};
+        c1.guardiao = true;
+        c3.cluster = new Cluster();
+
+        int tempoExecucao = 5;
+
+        int resultado = loopPrincipal(null, criaturas, tempoExecucao);
+        assertEquals(0, resultado);
+    }
+
 
     @Test
     public void testFrameDelayQuandoFrameTimeEhMenorQueFrameDelay() {
