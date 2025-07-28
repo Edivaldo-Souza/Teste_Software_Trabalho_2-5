@@ -5,6 +5,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import java.util.Objects;
+
 @Entity
 public class Usuario {
     @Id
@@ -17,6 +19,18 @@ public class Usuario {
     private Integer quantidadeSimulacoes;
     private Float mediaSimulacoesBemSucedidas;
     private Double pontuacao;
+
+    public Usuario() {}
+
+    public Usuario(String login, String avatar, String senha, Integer quantidadeSimulacoesBemSucedidas, Integer quantidadeSimulacoes, Float mediaSimulacoesBemSucedidas, Double pontuacao) {
+        this.login = login;
+        this.avatar = avatar;
+        this.senha = senha;
+        this.quantidadeSimulacoesBemSucedidas = quantidadeSimulacoesBemSucedidas;
+        this.quantidadeSimulacoes = quantidadeSimulacoes;
+        this.mediaSimulacoesBemSucedidas = mediaSimulacoesBemSucedidas;
+        this.pontuacao = pontuacao;
+    }
 
     public Long getId() {
         return id;
@@ -94,4 +108,8 @@ public class Usuario {
         );
     }
 
+    public boolean equals(Object o) {
+        Usuario usuario = (Usuario) o;
+        return Objects.equals(login, usuario.login) && Objects.equals(avatar, usuario.avatar) && Objects.equals(senha, usuario.senha) && Objects.equals(quantidadeSimulacoesBemSucedidas, usuario.quantidadeSimulacoesBemSucedidas) && Objects.equals(quantidadeSimulacoes, usuario.quantidadeSimulacoes) && Objects.equals(mediaSimulacoesBemSucedidas, usuario.mediaSimulacoesBemSucedidas) && Objects.equals(pontuacao, usuario.pontuacao);
+    }
 }

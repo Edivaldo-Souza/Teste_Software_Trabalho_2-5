@@ -56,6 +56,7 @@ public class testCriarUsuario {
         System.setIn(testIn);
     }
 
+    // Teste para validar a criação de um usuário no sistema
     @Test
     public void testCriarUsuario(){
 

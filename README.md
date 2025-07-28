@@ -798,6 +798,40 @@ as moedas de um cluster que se aproxime dele
     }
 ```
 
+### Testes de Sistema
+- Teste da funcionalidade de criar um novo usuário no sistema
+```java
+@Test
+    public void testCriarUsuario(){
+
+        String inputStream = "2" + System.lineSeparator() +
+                "user2" + System.lineSeparator() +
+                "123" + System.lineSeparator() +
+                "Avatar" + System.lineSeparator() +
+                "3" + System.lineSeparator();
+
+
+        String usuarioCadastrado = "Usuario user2 :\n" +
+                " avatar = 'Avatar'\n" +
+                " quantidade de simulações = 0\n" +
+                " média de simulações bem sucedidas = 0,0000\n" +
+                " pontuação = 0";
+
+
+        provideInput(inputStream);
+        UsuarioInterface usuarioInterface = new UsuarioInterface(new Scanner(System.in));
+
+        usuarioInterface.iniciar();
+
+        String saida = outputStream.toString();
+        System.out.println(saida);
+        assertTrue(saida.contains("Fazer cadastro de usuario"));
+        assertTrue(saida.contains("Informe o login do usuario:"));
+        assertTrue(saida.contains(usuarioCadastrado));
+
+    }
+```
+
 ## 🛠️ Tecnologias Utilizadas
 
 - Linguagem: `Java 22`

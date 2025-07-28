@@ -388,5 +388,39 @@ public class TesteEstrutural {
         // O tempo total ainda deve ser de no mínimo 1000ms (tempoExecucao)
         assertTrue(duracao >= 1000);
     }
+
+    @Test
+    void testEqualsComLoginDiferente() {
+        Usuario usuario1 = new Usuario("user123", "avatar.png", "senha@123", 10, 20, 0.5F, 100D);
+        Usuario usuario2;
+
+        // O segundo usuário tem um login diferente
+        usuario2 = new Usuario("user_diferente", "avatar.png", "senha@123", 10, 20, 0.5F, 100D);
+        assertNotEquals(usuario1, usuario2, "O método equals deveria retornar falso quando o login é diferente.");
+
+        // O segundo usuário tem um avatar diferente
+        usuario2 = new Usuario("user123", "outro_avatar.jpg", "senha@123", 10, 20, 0.5F, 100D);
+        assertNotEquals(usuario1, usuario2, "O método equals deveria retornar falso quando o avatar é diferente.");
+
+        // O segundo usuário tem uma senha diferente
+        usuario2 = new Usuario("user123", "avatar.png", "outra_senha", 10, 20, 0.5F, 100D);
+        assertNotEquals(usuario1, usuario2, "O método equals deveria retornar falso quando a senha é diferente.");
+
+        // O segundo usuário tem uma quantidade de simulações bem-sucedidas diferente
+        usuario2 = new Usuario("user123", "avatar.png", "senha@123", 99, 20, 0.5F, 100D);
+        assertNotEquals(usuario1, usuario2, "O método equals deveria retornar falso para quantidade de simulações bem-sucedidas diferente.");
+
+        // O segundo usuário tem uma quantidade de simulações diferente
+        usuario2 = new Usuario("user123", "avatar.png", "senha@123", 10, 25, 0.5F, 100D);
+        assertNotEquals(usuario1, usuario2, "O método equals deveria retornar falso para quantidade de simulações diferente.");
+
+        // O segundo usuário tem uma média de simulações bem-sucedidas diferente
+        usuario2 = new Usuario("user123", "avatar.png", "senha@123", 10, 20, 0.75F, 100D);
+        assertNotEquals(usuario1, usuario2, "O método equals deveria retornar falso para média de simulações bem-sucedidas diferente.");
+
+        // O segundo usuário tem uma pontuação diferente
+        usuario2 = new Usuario("user123", "avatar.png", "senha@123", 10, 20, 0.5F, 150D);
+        assertNotEquals(usuario1, usuario2, "O método equals deveria retornar falso quando a pontuação é diferente.");
+    }
 }
 
