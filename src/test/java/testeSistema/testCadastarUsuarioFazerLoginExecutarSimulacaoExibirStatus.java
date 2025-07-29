@@ -32,7 +32,7 @@ public class testCadastarUsuarioFazerLoginExecutarSimulacaoExibirStatus extends 
     // Teste da jornada de usuário que engloba o cadastro de um novo usuário, a realização do login
     // com para esse mesmo usuário, a execução de uma simulação e a busca pelas estatísticas de todos os usuários
     @Test
-    public void mainTest() {
+    public void cadastarUsuarioFazerLoginExecutarSimulacaoExibirStatus() {
 
         String inputStream = "2" + System.lineSeparator() +
                 "user2" + System.lineSeparator() +

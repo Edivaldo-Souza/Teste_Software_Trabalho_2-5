@@ -20,7 +20,7 @@ public class testCriarUsuario extends TesteSistemaBase{
 
     // Teste para validar a criação de um usuário no sistema
     @Test
-    public void testCriarUsuario(){
+    public void criarUsuario(){
 
         String inputStream = "2" + System.lineSeparator() +
                 "user2" + System.lineSeparator() +

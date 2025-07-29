@@ -798,6 +798,133 @@ as moedas de um cluster que se aproxime dele
     }
 ```
 
+### Testes de Integração
+- Teste de integração que verifica se um usuário quando
+salvo no banco de dados consegue ser buscado através do seu
+id retornado pelo método de salvá-lo
+```java
+@Test
+    void deveSalvarUsuarioERecuperarPorId() {
+        // Arrange
+        Usuario usuario = new Usuario();
+        usuario.setLogin("teste");
+        usuario.setSenha("123");
+
+        // Persiste o usuário (usando um UsuarioService dedicado)
+        UsuarioService serviceParaSalvar = new UsuarioService();
+        Usuario usuarioSalvo = serviceParaSalvar.salvarUsuario(usuario);
+        Long idSalvo = usuarioSalvo.getId(); // Guarda o ID para busca posterior
+
+        // Recupera o usuário (usando um NOVO UsuarioService)
+        UsuarioService serviceParaBuscar = new UsuarioService();
+        Usuario usuarioRecuperado = serviceParaBuscar.buscarPorId(idSalvo);
+
+        // Assert
+        assertNotNull(usuarioRecuperado);
+        assertEquals("teste", usuarioRecuperado.getLogin());
+    }
+```
+- Teste de integração que verifica a função de buscar todas os usuários
+salvos e compara de o nome de login desses usuários está presentes dentre
+os usuários retornados na busca
+```java
+@Test
+    void deveBuscarTodosUsuarios() {
+        // Cria um UsuarioService específico para este teste
+        UsuarioService serviceParaTeste = new UsuarioService();
+
+        // Cria e persiste os usuários em uma única operação
+        Usuario u1 = new Usuario();
+        u1.setLogin("user1");
+        u1.setSenha("123");
+
+        Usuario u2 = new Usuario();
+        u2.setLogin("user2");
+        u2.setSenha("456");
+
+        // Persiste ambos os usuários em uma única transação
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        em.persist(u1);
+        em.persist(u2);
+        em.getTransaction().commit();
+        em.close();
+
+        // Act: Busca todos (usando um novo UsuarioService)
+        UsuarioService serviceParaBusca = new UsuarioService();
+        List<Usuario> usuarios = serviceParaBusca.buscarTodos();
+
+        // Assert
+        assertTrue(usuarios.stream().anyMatch(u -> u.getLogin().equals("user1")));
+        assertTrue(usuarios.stream().anyMatch(u -> u.getLogin().equals("user2")));
+
+        // Fecha os recursos do serviceParaBusca (implícito, pois o método buscarTodos() já fecha)
+    }
+```
+- Teste para verifica a buscar de um usuário salvo no banco de dados
+através do nome de login do usuário
+```java
+@Test
+    public void testBuscarUsuarioPorLogin(){
+        UsuarioService usuarioService = new UsuarioService();
+
+        Usuario usuario1 = new Usuario();
+        usuario1.setLogin("user2");
+        usuario1.setSenha("123456");
+        usuario1.setAvatar("AvatarPadrao");
+        usuario1.setQuantidadeSimulacoesBemSucedidas(10);
+        usuario1.setQuantidadeSimulacoes(15);
+        usuario1.setMediaSimulacoesBemSucedidas(0.66F);
+
+        usuarioService.salvarUsuario(usuario1);
+
+        Usuario usuarioSalvo = usuarioService.buscarPorLogin(usuario1.getLogin());
+
+        assertThat(usuarioSalvo).isEqualTo(usuario1);
+    }
+```
+- Teste que verifica a situação em que usuário que já esteja no banco de dados,
+quando tem seus dados buscados através do seu id, é possível fazer alterações
+em atributos e também persisti-las
+```java
+@Test
+    void deveAtualizarUsuarioComSimulacao() {
+        // Configuração inicial
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("meuPU_H2");
+        EntityManager em = emf.createEntityManager();
+
+        try {
+            // Persistência inicial do usuário
+            em.getTransaction().begin();
+            Usuario usuario = new Usuario();
+            usuario.setLogin("simulador");
+            usuario.setSenha("123");
+            usuario.setQuantidadeSimulacoes(0);
+            usuario.setQuantidadeSimulacoesBemSucedidas(0);
+            em.persist(usuario);
+            em.getTransaction().commit();
+
+            // Atualização dos dados
+            em.getTransaction().begin();
+            Usuario usuarioAtualizado = em.find(Usuario.class, usuario.getId());
+            usuarioAtualizado.setQuantidadeSimulacoes(1);
+            usuarioAtualizado.setQuantidadeSimulacoesBemSucedidas(1);
+            usuarioAtualizado.setMediaSimulacoesBemSucedidas(1.0f);
+            em.getTransaction().commit();
+
+            // Verificação
+            em.clear(); // Limpa o cache para forçar busca do banco
+            Usuario usuarioVerificado = em.find(Usuario.class, usuario.getId());
+
+            assertEquals(1, usuarioVerificado.getQuantidadeSimulacoes());
+            assertEquals(1.0f, usuarioVerificado.getMediaSimulacoesBemSucedidas());
+        } finally {
+            em.close();
+            emf.close();
+        }
+    }
+```
+
 ### Testes de Sistema
 - Teste da funcionalidade de criar um novo usuário no sistema
 ```java
@@ -831,19 +958,152 @@ as moedas de um cluster que se aproxime dele
 
     }
 ```
+- Teste da jornada de usuário que engloba o cadastro de um novo usuário, a realização do login
+  com para esse mesmo usuário, a execução de uma simulação e a busca pelas estatísticas de todos os usuários
+```java
+    @Test
+    public void cadastarUsuarioFazerLoginExecutarSimulacaoExibirStatus() {
+
+        String inputStream = "2" + System.lineSeparator() +
+                "user2" + System.lineSeparator() +
+                "123" + System.lineSeparator() +
+                "Avatar" + System.lineSeparator() +
+                "1" + System.lineSeparator() +
+                "user2" + System.lineSeparator() +
+                "123" + System.lineSeparator() +
+                "1" + System.lineSeparator() +
+                "10" + System.lineSeparator() +
+                "60" + System.lineSeparator() +
+                System.lineSeparator() +
+                "2" + System.lineSeparator() +
+                "3" + System.lineSeparator() +
+                "3" + System.lineSeparator();
+
+
+        String usuarioCadastrado = "Usuario user2 :\n" +
+                " avatar = 'Avatar'\n" +
+                " quantidade de simulações = 0\n" +
+                " média de simulações bem sucedidas = 0,0000\n" +
+                " pontuação = 0";
+
+
+        provideInput(inputStream);
+
+        UsuarioInterface usuarioInterface = new UsuarioInterface(new Scanner(System.in));
+
+        fecharJanelaAutomatico();
+
+        usuarioInterface.iniciar();
+
+        String saida = outputStream.toString();
+        System.out.println(saida);
+        assertTrue(saida.contains("Fazer cadastro de usuario"));
+        assertTrue(saida.contains("Informe o login do usuario:"));
+        assertTrue(saida.contains(usuarioCadastrado));
+        assertTrue(saida.contains("Login realizado com sucesso!"));
+        assertTrue(saida.contains("Simulação executada!"));
+        assertTrue(saida.contains("Usuario user2 :\n" + " avatar = 'Avatar'\n" + " quantidade de simulações = 1\n"));
+    }
+```
+- Teste da jornada de usuário que engloba o cadastro de um novo usuário, a realização do login
+com para esse mesmo usuário e a execução de uma simulação
+```java
+@Test
+public void cadastrarUsuarioFazerLoginExecutarSimulacao() {
+
+  String inputStream = "2" + System.lineSeparator() +
+          "user2" + System.lineSeparator() +
+          "123" + System.lineSeparator() +
+          "Avatar" + System.lineSeparator() +
+          "1" + System.lineSeparator() +
+          "user2" + System.lineSeparator() +
+          "123" + System.lineSeparator() +
+          "1" + System.lineSeparator() +
+          "20" + System.lineSeparator() +
+          "60" + System.lineSeparator() +
+          System.lineSeparator() +
+          "3" + System.lineSeparator() +
+          "3" + System.lineSeparator();
+
+
+  String usuarioCadastrado = "Usuario user2 :\n" +
+          " avatar = 'Avatar'\n" +
+          " quantidade de simulações = 0\n" +
+          " média de simulações bem sucedidas = 0,0000\n" +
+          " pontuação = 0";
+
+
+  provideInput(inputStream);
+  UsuarioInterface usuarioInterface = new UsuarioInterface(new Scanner(System.in));
+
+  fecharJanelaAutomatico();
+
+  usuarioInterface.iniciar();
+
+  String saida = outputStream.toString();
+  System.out.println(saida);
+  assertTrue(saida.contains("Fazer cadastro de usuario"));
+  assertTrue(saida.contains("Informe o login do usuario:"));
+  assertTrue(saida.contains(usuarioCadastrado));
+  assertTrue(saida.contains("Login realizado com sucesso!"));
+  assertTrue(saida.contains("Simulação executada!"));
+}
+```
+- Teste da jornada de usuário que engloba o cadastro de um novo usuário, a realização do login
+  com para esse mesmo usuário e a busca pelas estatísticas de todos os usuários, que nesse caso
+  retorna apenas o usuário que foi criado para o teste, cuja quantidade de simulações é igual
+  a zero
+```java
+@Test
+    public void cadastrarUsuarioFazerLoginExibirStatus() {
+
+        String inputStream = "2" + System.lineSeparator() +
+                "user2" + System.lineSeparator() +
+                "123" + System.lineSeparator() +
+                "Avatar" + System.lineSeparator() +
+                "1" + System.lineSeparator() +
+                "user2" + System.lineSeparator() +
+                "123" + System.lineSeparator() +
+                "2" + System.lineSeparator() +
+                "3" + System.lineSeparator() +
+                "3" + System.lineSeparator();
+
+
+        provideInput(inputStream);
+        UsuarioInterface usuarioInterface = new UsuarioInterface(new Scanner(System.in));
+
+        usuarioInterface.iniciar();
+
+        String saida = outputStream.toString();
+        System.out.println(saida);
+        assertTrue(saida.contains("Fazer cadastro de usuario"));
+        assertTrue(saida.contains("Informe o login do usuario:"));
+        assertTrue(saida.contains("Login realizado com sucesso!"));
+        assertTrue(saida.contains("Usuario user2 :\n" + " avatar = 'Avatar'\n" + " quantidade de simulações = 0\n"));
+    }
+```
 
 ## 🛠️ Tecnologias Utilizadas
 
 - Linguagem: `Java 22`
-- Bibliotecas:`JUnit`,`assertj`,`libsdl4j`
+- Bibliotecas:`JUnit`,`assertj`,`libsdl4j`,`mockito-core`,`jqwik`
 
 ## Como Utilizar
 - Abrir projeto na IDE
 - Executar o arquivo Main.java para usar as funcionalidades novas
 
-- Executar os seguintes arquivos de teste:
+- Executar os seguintes arquivos de teste: (Para obter 100% MC/DC executar todos os testes)
+  - testeIntegracao
+    - TesteIntegracao.java
+    - UsuarioServiceIntegrationTest.java
+  - testeSistema
+    - testCadastrarUsuarioFazerLoginExecutarSimulacaoExibirStatus.java
+    - testCadastrarUsuarioFazerLoginExibirStatus.java
+    - testCriarUsuario.java
+    - testEntradasInvalidas.java
+    - testCadastrarUsuarioFazerLoginExecutarSimulacao.java
   - TesteDominio.java
-  - TesteEstrutural.java (100% MC/DC Coverege)
+  - TesteEstrutural.java
   - TesteFronteira.java
   - TesteDePropriedades.java
   - TesteMockitoSimulacao.java

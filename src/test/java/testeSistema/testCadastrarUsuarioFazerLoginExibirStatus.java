@@ -23,7 +23,7 @@ public class testCadastrarUsuarioFazerLoginExibirStatus extends TesteSistemaBase
     // retorna apenas o usuário que foi criado para o teste, cuja quantidade de simulações é igual
     // a zero
     @Test
-    public void mainTest() {
+    public void cadastrarUsuarioFazerLoginExibirStatus() {
 
         String inputStream = "2" + System.lineSeparator() +
                 "user2" + System.lineSeparator() +

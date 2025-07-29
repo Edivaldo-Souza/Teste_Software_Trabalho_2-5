@@ -1,33 +1,20 @@
 package testeSistema;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
-import org.example.simulationV1.simulation.ProcessamentoCriaturas;
 import org.example.usuarioInterface.UsuarioInterface;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class testFazerLoginExecutarSimulacao extends TesteSistemaBase{
+public class testCadastrarUsuarioFazerLoginExecutarSimulacao extends TesteSistemaBase{
 
 
     // Teste da jornada de usuário que engloba o cadastro de um novo usuário, a realização do login
     // com para esse mesmo usuário e a execução de uma simulação
     @Test
-    public void mainTest() {
+    public void cadastrarUsuarioFazerLoginExecutarSimulacao() {
 
         String inputStream = "2" + System.lineSeparator() +
                 "user2" + System.lineSeparator() +
