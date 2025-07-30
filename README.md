@@ -1105,7 +1105,7 @@ public void cadastrarUsuarioFazerLoginExecutarSimulacao() {
   - TesteDominio.java
   - TesteEstrutural.java
   - TesteFronteira.java
-  - TesteDePropriedades.java
+  - TestePropriedades.java
   - TesteMockitoSimulacao.java
   - TesteMockitoUsuario.java
 
